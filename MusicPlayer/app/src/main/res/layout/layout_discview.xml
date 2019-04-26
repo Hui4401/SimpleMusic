@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--播放中间的光盘的界面-->
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!--底盘-->
+    <ImageView
+        android:id="@+id/ivDiskBlackground"
+        android:layout_width="320dp"
+        android:layout_height="320dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp"
+        android:src="@drawable/ic_disc"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imageView"
+        android:layout_width="225dp"
+        android:layout_height="225dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="120dp"
+        android:src="@raw/ic_music1"
+        />
+
+    <!--唱针-->
+    <ImageView
+        android:id="@+id/ivNeedle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="180dp"
+        android:layout_marginTop="-15dp"
+        android:src="@drawable/ic_needle"/>
+
+</RelativeLayout>
