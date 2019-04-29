@@ -29,7 +29,10 @@
 11. 音频焦点控制, 被其他音频打断后能继续播放
 
 ## 4. 效果图
-[![Acwovj.th.png](https://s2.ax1x.com/2019/04/03/Acwovj.th.png)](https://imgchr.com/i/Acwovj) [![AcwI2Q.th.png](https://s2.ax1x.com/2019/04/03/AcwI2Q.th.png)](https://imgchr.com/i/AcwI2Q) [![Acw58g.th.png](https://s2.ax1x.com/2019/04/03/Acw58g.th.png)](https://imgchr.com/i/Acw58g) [![Acw7Ks.th.png](https://s2.ax1x.com/2019/04/03/Acw7Ks.th.png)](https://imgchr.com/i/Acw7Ks)
+[![Acw7Ks.md.png](https://s2.ax1x.com/2019/04/03/Acw7Ks.md.png)](https://imgchr.com/i/Acw7Ks)
+[![Acwovj.md.png](https://s2.ax1x.com/2019/04/03/Acwovj.md.png)](https://imgchr.com/i/Acwovj)
+[![AcwI2Q.md.png](https://s2.ax1x.com/2019/04/03/AcwI2Q.md.png)](https://imgchr.com/i/AcwI2Q)
+[![Acw58g.md.png](https://s2.ax1x.com/2019/04/03/Acw58g.md.png)](https://imgchr.com/i/Acw58g)
 
 ## 5. 简要说明
 
@@ -37,7 +40,6 @@
 | 文件名 | 功能 |
 |--|--|
 | /java/useLitepal/*.java | litepal采用对象映射操作数据库, 每个文件对应一张表 |
-| /java/widget/CircleImageView.java | 切分圆形视图 |
 | /java/widget/RotateAnimator.java | 唱盘动画制作 |
 | /java/Music.java | 音乐类 |
 | /java/MusicAdapter.java | 音乐列表显示音乐的适配器 |
