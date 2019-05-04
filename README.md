@@ -47,9 +47,9 @@
 | /java/SplashActivity.java | 欢迎界面 |
 | /java/MainActivity.java | 主界面 |
 | /java/LocalMusicActivity.java | 本地音乐界面 |
-| /java/ OlineMusicActivity.java | 在线音乐界面 |
+| /java/OlineMusicActivity.java | 在线音乐界面 |
 | /java/PlayerActivity.java | 播放器界面 |
-| /java/ MusicService.java | 音乐服务 |
+| /java/MusicService.java | 音乐服务 |
 | /java/Utils.java | 工具类, 封装了一些常用操作 |
 
 ### 各xml文件的作用
@@ -62,7 +62,7 @@
 | /res/layout/ activity_onlinemusic.xml | 在线音乐界面布局 |
 | /res/layout/ activity_player.xml | 播放器界面布局 |
 | /res/layout/music_item.xml | 音乐列表项布局 |
-| /res/layout/playinglist_item | 播放列表项布局 |
+| /res/layout/playinglist_item.xml | 播放列表项布局 |
 | /res/layout/layout_discview.xml | 播放器唱盘布局 |
 | /res/layout/nav_header.xml | 侧拉菜单头布局 |
 | /res/menu/main.xml | 主界面活动跳转菜单布局 |
