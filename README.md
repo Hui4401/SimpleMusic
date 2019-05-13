@@ -1,4 +1,4 @@
-# 一个简单的Android音乐播放器
+# SimpleMusic
 
 ## 1. 开发环境
 - AndroidStudio 3.2
