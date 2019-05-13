@@ -28,13 +28,7 @@
 10. 缓存网络音乐列表, 需要时刷新, 也可以添加歌单或者移除
 11. 音频焦点控制, 被其他音频打断后能继续播放
 
-## 4. 效果图
-[![Acw7Ks.md.png](https://s2.ax1x.com/2019/04/03/Acw7Ks.md.png)](https://imgchr.com/i/Acw7Ks)
-[![Acwovj.md.png](https://s2.ax1x.com/2019/04/03/Acwovj.md.png)](https://imgchr.com/i/Acwovj)
-[![AcwI2Q.md.png](https://s2.ax1x.com/2019/04/03/AcwI2Q.md.png)](https://imgchr.com/i/AcwI2Q)
-[![Acw58g.md.png](https://s2.ax1x.com/2019/04/03/Acw58g.md.png)](https://imgchr.com/i/Acw58g)
-
-## 5. 简要说明
+## 4. 简要说明
 
 ### 各java文件的作用
 | 文件名 | 功能 |
@@ -68,4 +62,8 @@
 | /res/menu/main.xml | 主界面活动跳转菜单布局 |
 | /res/menu/nav_menu.xml | 侧拉菜单项布局 |
 
-
+## 5. 效果图
+[![Acw7Ks.md.png](https://s2.ax1x.com/2019/04/03/Acw7Ks.md.png)](https://imgchr.com/i/Acw7Ks)
+[![Acwovj.md.png](https://s2.ax1x.com/2019/04/03/Acwovj.md.png)](https://imgchr.com/i/Acwovj)
+[![AcwI2Q.md.png](https://s2.ax1x.com/2019/04/03/AcwI2Q.md.png)](https://imgchr.com/i/AcwI2Q)
+[![Acw58g.md.png](https://s2.ax1x.com/2019/04/03/Acw58g.md.png)](https://imgchr.com/i/Acw58g)
