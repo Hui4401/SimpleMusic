@@ -109,6 +109,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.refresh:
                 localMusicList.clear();
+                LitePal.deleteAll(LocalMusic.class);
                 mMusicUpdateTask = new MusicUpdateTask();
                 mMusicUpdateTask.execute();
                 break;
@@ -180,7 +181,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
         Bitmap img = null;
         for (LocalMusic s:list){
             if (s.img != null)  img = BitmapFactory.decodeByteArray(s.img,0,s.img.length);
-            Music m = new Music(s.songUrl, s.title, s.artist, s.duration, 0, img);
+            Music m = new Music(s.songUrl, s.title, s.artist, s.duration, 0, s.imgUrl, img);
             localMusicList.add(m);
         }
 
@@ -333,7 +334,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
                     long duration = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION));
                     int albumId = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM_ID));
                     int isMusic = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.IS_MUSIC));
-                    if (isMusic != 0 && duration/(500*60) >= 1) {
+                    if (isMusic != 0 && duration/(500*60) >= 2) {
                         //再通过专辑Id组合出专辑的Uri地址
                         Uri albumUri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), albumId);
                         //获得图片
@@ -341,7 +342,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
                         if (img != null)
                             //压缩
                             img = Bitmap.createScaledBitmap(img, 250, 250, true);
-                        Music data = new Music(musicUri.toString(), title, artist, duration, 0, img);
+                        Music data = new Music(musicUri.toString(), title, artist, duration, 0, "", img);
 
                         //切换到主线程进行更新
                         publishProgress(data);
@@ -360,7 +361,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
             if (!localMusicList.contains(data)){
                 //添加到列表和数据库
                 localMusicList.add(data);
-                LocalMusic music= new LocalMusic(data.songUrl, data.title, data.artist, data.duration, data.played, Utils.byteImg(data.img));
+                LocalMusic music = new LocalMusic(data.songUrl, data.title, data.artist, data.duration, data.played, data.imgUrl, Utils.byteImg(data.img));
                 music.save();
             }
             //刷新UI界面

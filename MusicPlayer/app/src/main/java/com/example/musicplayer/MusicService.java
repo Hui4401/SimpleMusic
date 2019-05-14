@@ -90,7 +90,7 @@ public class MusicService extends Service {
                 return;
             }
             playingmusic_list.add(0, item);
-            PlayingMusic playingMusic = new PlayingMusic(item.songUrl, item.title, item.artist, item.duration, item.played, Utils.byteImg(item.img));
+            PlayingMusic playingMusic = new PlayingMusic(item.songUrl, item.title, item.artist, item.duration, item.played, item.imgUrl, Utils.byteImg(item.img));
             playingMusic.save();
             //添加完成后，开始播放
             currentMusic = playingmusic_list.get(0);
@@ -104,7 +104,7 @@ public class MusicService extends Service {
             LitePal.deleteAll(PlayingMusic.class);
             playingmusic_list.addAll(items);
             for (Music i: items){
-                PlayingMusic playingMusic = new PlayingMusic(i.songUrl, i.title, i.artist, i.duration, i.played, Utils.byteImg(i.img));
+                PlayingMusic playingMusic = new PlayingMusic(i.songUrl, i.title, i.artist, i.duration, i.played, i.imgUrl, Utils.byteImg(i.img));
                 playingMusic.save();
             }
             //添加完成后，开始播放
@@ -179,7 +179,7 @@ public class MusicService extends Service {
         Bitmap img = null;
         for (PlayingMusic i : list) {
             if (i.img != null)  img = BitmapFactory.decodeByteArray(i.img,0, i.img.length);
-            Music m = new Music(i.songUrl, i.title, i.artist, i.duration, 0, img);
+            Music m = new Music(i.songUrl, i.title, i.artist, i.duration, 0, i.imgUrl, img);
             playingmusic_list.add(m);
         }
         if (playingmusic_list.size() > 0) {

@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Bitmap img = null;
         for (MyMusic s:list){
             if (s.img != null)  img = BitmapFactory.decodeByteArray(s.img,0,s.img.length);
-            Music m = new Music(s.songUrl, s.title, s.artist, s.duration, 0, img);
+            Music m = new Music(s.songUrl, s.title, s.artist, s.duration, 0, s.imgUrl, img);
             musicList.add(m);
         }
 
@@ -364,7 +364,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return;
         //添加到列表和数据库
         musicList.add(0, item);
-        MyMusic myMusic = new MyMusic(item.songUrl, item.title, item.artist, item.duration, item.played, Utils.byteImg(item.img));
+        MyMusic myMusic = new MyMusic(item.songUrl, item.title, item.artist, item.duration, item.played, item.imgUrl, Utils.byteImg(item.img));
         myMusic.save();
     }
 

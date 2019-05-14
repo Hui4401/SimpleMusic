@@ -97,6 +97,12 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(mServiceConnection);
+    }
+
+    @Override
     public void finish() {
         super.finish();
         //界面退出时的动画

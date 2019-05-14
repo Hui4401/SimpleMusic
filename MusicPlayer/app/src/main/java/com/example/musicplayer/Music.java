@@ -11,14 +11,16 @@ public class Music {
     String songUrl;     //歌曲地址
     long duration;      //总时长
     long played; //    进度
+    String imgUrl;
     Bitmap img;    //专辑图片
 
-    Music(String songUrl, String title, String artist, long duration, long played, Bitmap img) {
+    Music(String songUrl, String title, String artist, long duration, long played, String imgUrl, Bitmap img) {
         this.title = title;
         this.artist = artist;
         this.songUrl = songUrl;
         this.duration = duration;
         this.played = played;
+        this.imgUrl = imgUrl;
         this.img = img;
     }
 

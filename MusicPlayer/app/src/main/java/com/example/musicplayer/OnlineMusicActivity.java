@@ -1,5 +1,6 @@
 package com.example.musicplayer;
 
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -7,7 +8,9 @@ import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.musicplayer.useLitepal.OnlineMusic;
 
@@ -25,15 +29,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.litepal.LitePal;
 
-import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -51,13 +54,39 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
     private MusicService.MusicServiceIBinder service;
     private MusicAdapter adapter;
 
+    private OkHttpClient client;
+    private Handler mainHanlder;
+
+    @SuppressLint("HandlerLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_localmusic);
+        setContentView(R.layout.activity_onlinemusic);
 
         //初始化
         initActivity();
+
+        mainHanlder = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                switch (msg.what){
+                    case 60:
+                        //更新一首歌曲
+                        Music music = (Music) msg.obj;
+                        if (!onlinemusic_list.contains(music)) {
+                            onlinemusic_list.add(music);
+                            adapter.notifyDataSetChanged();
+                            musicCountView.setText("播放全部(共" + onlinemusic_list.size() + "首)");
+                        }
+                        break;
+                    case 61:
+                        //更新歌曲完成，开始获取图片
+                        getMusicPic();
+                        break;
+                }
+            }
+        };
 
         // 列表项点击事件
         musicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -110,6 +139,12 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
             case R.id.play_all:
                 service.addPlayList(onlinemusic_list);
                 break;
+            case R.id.refresh:
+                onlinemusic_list.clear();
+                adapter.notifyDataSetChanged();
+                LitePal.deleteAll(OnlineMusic.class);
+                getOlineMusic();
+                break;
             case R.id.player:
                 Intent intent = new Intent(OnlineMusicActivity.this, PlayerActivity.class);
                 startActivity(intent);
@@ -135,12 +170,14 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
         super.onDestroy();
         onlinemusic_list.clear();
         unbindService(mServiceConnection);
+        client.dispatcher().cancelAll();
     }
 
     // 初始化活动
     private void initActivity(){
         //初始化控件
         ImageView btn_playAll = this.findViewById(R.id.play_all);
+        ImageView btn_refresh = this.findViewById(R.id.refresh);
         musicCountView = this.findViewById(R.id.play_all_title);
         musicListView = this.findViewById(R.id.music_list);
         RelativeLayout playerToolView = this.findViewById(R.id.player);
@@ -152,6 +189,7 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
 
         // 设置监听
         btn_playAll.setOnClickListener(this);
+        btn_refresh.setOnClickListener(this);
         playerToolView.setOnClickListener(this);
         btn_playOrPause.setOnClickListener(this);
         btn_playingList.setOnClickListener(this);
@@ -170,10 +208,10 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
         //从数据库获取保存的本地音乐列表
         onlinemusic_list = new ArrayList<>();
         List<OnlineMusic> list = LitePal.findAll(OnlineMusic.class);
-        Bitmap img;
+        Bitmap img = null;
         for (OnlineMusic s:list){
-            img = BitmapFactory.decodeByteArray(s.img,0,s.img.length);
-            Music m = new Music(s.songUrl, s.title, s.artist, s.duration, 0, img);
+            if (s.img!= null) img = BitmapFactory.decodeByteArray(s.img,0,s.img.length);
+            Music m = new Music(s.songUrl, s.title, s.artist, s.duration, 0, s.imgUrl, img);
             onlinemusic_list.add(m);
         }
 
@@ -183,8 +221,10 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
 
         musicCountView.setText("播放全部(共"+onlinemusic_list.size()+"首)");
 
-        //获取音乐
-        getOlineMusicList();
+        client = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)//设置连接超时时间
+                .readTimeout(10, TimeUnit.SECONDS)//设置读取超时时间
+                .build();
     }
 
 
@@ -292,50 +332,37 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
     };
 
     // 获取在线音乐
-    private void getOlineMusicList() {
+    private void getOlineMusic() {
 
-        //在子线程中获取音乐
-        new Thread( new Runnable() {
+        Request request = new Request.Builder()
+                .url("https://v1.itooi.cn/netease/songList?id=3778678&pageSize=20&format=1")
+                .build();
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void run() {
-
-                HttpURLConnection connection = null;
-                try {
-                    // 调用URL对象的openConnection方法获取HttpURLConnection的实例
-                    String songUrl = "https://api.bzqll.com/music/netease/songList?key=579621905&id=3778678&limit=200&offset=0";
-                    URL url = new URL(songUrl);
-                    connection = (HttpURLConnection) url.openConnection();
-                    connection.setRequestMethod("GET");
-                    // 设置连接超时、读取超时的时间，单位为毫秒（ms）
-                    connection.setConnectTimeout(80000);
-                    connection.setReadTimeout(80000);
-                    // getInputStream方法获取服务器返回的输入流
-                    InputStream in = connection.getInputStream();
-                    // 使用BufferedReader对象读取返回的数据流
-                    // 按行读取，存储在StringBuider对象response中
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                    StringBuilder response = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        response.append(line);
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(OnlineMusicActivity.this, "网络错误", Toast.LENGTH_SHORT).show();
                     }
-                    //构造json数据
-                    JSONObject songJSON = new JSONObject(response.toString());
-                    String songdata = songJSON.getString("data");
-                    JSONObject dataJSON = new JSONObject(songdata);
-                    // 真正要需要的数据存储在以下songs数组中
-                    JSONArray songsArray = dataJSON.getJSONArray("songs");
+                });
+            }
 
-                    Bitmap bitmap = null;
-                    for(int i=0; i < songsArray.length(); i++) {
-                        JSONObject songInfo = songsArray.getJSONObject(i);
-                        // 获取歌曲各类别信息
-//                        String id = songInfo.getString("id");
-                        String songurl = songInfo.getString("url")+"&br=128000";
-                        String name = songInfo.getString("name");
-                        String singer = songInfo.getString("singer");
-                        URL pic = new URL(songInfo.getString("pic"));
-//                        Uri lrc = Uri.parse(songInfo.getString("lrc"));
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String result = response.body().string();
+                try{
+                    JSONObject obj = new JSONObject(result);
+                    JSONArray songs = new JSONArray(obj.getString("data"));
+
+                    for(int i=0; i<songs.length(); i++){
+                        JSONObject song = songs.getJSONObject(i);
+
+                        String id = song.getString("id");
+                        String songurl = "https://v1.itooi.cn/netease/url?id=" + id + "&quality=128";
+                        String name = song.getString("name");
+                        String singer = song.getString("singer");
+                        String pic = "https://v1.itooi.cn/netease/pic?id=" + id + "&param=20y20";
 
                         //如果列表中已存在同一首歌曲, 则不在获取这首歌
                         boolean flag = false;
@@ -344,57 +371,74 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
                         }
                         if (flag) continue;
 
-                        //获取图片
-                        OkHttpClient client = new OkHttpClient.Builder()
-                                .connectTimeout(20, TimeUnit.SECONDS)
-                                .readTimeout(20, TimeUnit.SECONDS)
-                                .build();
-                        Request request = new Request.Builder()
-                                .url(pic)
-                                .build();
-                        Response response1 = client.newCall(request).execute();
-                        if (response1.isSuccessful()) {
-                            InputStream inputStream = response1.body().byteStream();
-                            bitmap = BitmapFactory.decodeStream(inputStream);
-                            //压缩
-                            bitmap = Bitmap.createScaledBitmap(bitmap, 250, 250, true);
-                            inputStream.close();
-                        }
-                        
-                        //实例化音乐类
-                        Music song = new Music(songurl, name, singer, 0, 0, bitmap);
-                        //送入主线程更新列表
-                        uploadView(song);
+                        //实例化一首音乐并发送到主线程更新
+                        Music music = new Music(songurl, name, singer, 0, 0, pic, null);
+                        Message message = mainHanlder.obtainMessage();
+                        message.what = 60;
+                        message.obj = music;
+                        mainHanlder.sendMessage(message);
+                        Thread.sleep(20);
                     }
-                } catch (Exception e){
-                    e.printStackTrace();
-
-                } finally {
-                    if (connection != null){
-                        // 结束后，关闭连接
-                        connection.disconnect();
-                    }
+                    //所有音乐更新完成
+                    Message message2 = mainHanlder.obtainMessage();
+                    message2.what = 61;
+                    mainHanlder.sendMessage(message2);
                 }
-            }
-        }).start();
-    }
-
-    // 主线程更新UI
-    private void uploadView(final Music music){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                //切换到主线程, 添加到列表和数据库并更新UI
-                onlinemusic_list.add(music);
-                OnlineMusic onlineMusic = new OnlineMusic(music.songUrl, music.title, music.artist, music.duration, music.played, Utils.byteImg(music.img));
-                onlineMusic.save();
-                MusicAdapter adapter = (MusicAdapter) musicListView.getAdapter();
-                adapter.notifyDataSetChanged();
-                musicCountView.setText("播放全部(共"+onlinemusic_list.size()+"首)");
+                catch (Exception e){}
             }
         });
     }
 
+    //获取音乐封面
+    private void getMusicPic(){
+
+        @SuppressLint("HandlerLeak")
+        final Handler mhandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                switch (msg.what){
+                    case 77:
+                        //更新一首歌曲的图片
+                        Bitmap bitmap = (Bitmap) msg.obj;
+                        Music music = onlinemusic_list.get(msg.arg1);
+                        music.img = bitmap;
+                        LitePal.deleteAll(OnlineMusic.class, "title=?", music.title);
+                        OnlineMusic onlineMusic = new OnlineMusic(music.songUrl, music.title, music.artist, music.duration, music.played, music.imgUrl, Utils.byteImg(bitmap));
+                        onlineMusic.save();
+                        break;
+                }
+            }
+        };
+
+        for (int i=0; i<onlinemusic_list.size(); i++) {
+            Music music = onlinemusic_list.get(i);
+            final int index = i;
+            try {
+                Request requestPic = new Request.Builder().url(music.imgUrl).build();
+                client.newCall(requestPic).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {}
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        InputStream inputStream = response.body().byteStream();
+                        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                        //压缩
+                        bitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, true);
+                        inputStream.close();
+
+                        Message message = mhandler.obtainMessage();
+                        message.what = 77;
+                        message.obj = bitmap;
+                        message.arg1 = index;
+                        mhandler.sendMessage(message);
+                    }
+                });
+            }
+            catch (Exception e){}
+        }
+    }
     // 返回按钮
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
