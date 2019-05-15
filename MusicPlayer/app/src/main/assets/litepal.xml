@@ -2,12 +2,11 @@
 <litepal>
     <dbname value="MusicList"></dbname>
 
-    <version value="6"></version>
+    <version value="8"></version>
 
     <list>
         <mapping class="com.example.musicplayer.useLitepal.MyMusic" />
         <mapping class="com.example.musicplayer.useLitepal.LocalMusic" />
         <mapping class="com.example.musicplayer.useLitepal.PlayingMusic" />
-        <mapping class="com.example.musicplayer.useLitepal.OnlineMusic" />
     </list>
 </litepal>

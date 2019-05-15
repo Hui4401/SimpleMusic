@@ -4,11 +4,13 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -226,7 +228,6 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
                 seekBar.setProgress((int) item.played);
                 now_time.setText(Utils.formatTime(item.played));
                 total_time.setText(Utils.formatTime(item.duration));
-                if (item.img != null)   musicImg.setImageBitmap(item.img);
             }
 
             else {
@@ -238,7 +239,6 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
                 seekBar.setProgress((int) item.played);
                 now_time.setText(Utils.formatTime(item.played));
                 total_time.setText(Utils.formatTime(item.duration));
-                if (item.img != null)   musicImg.setImageBitmap(item.img);
             }
         }
 
@@ -270,7 +270,6 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
             seekBar.setProgress((int) item.played);
             now_time.setText(Utils.formatTime(item.played));
             total_time.setText(Utils.formatTime(item.duration));
-            if (item.img != null)   musicImg.setImageBitmap(item.img);
         }
 
         @Override
@@ -278,6 +277,17 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
             //变为暂停状态时
             ivplayorpause.setImageResource(R.drawable.ic_play);
             rotateAnimator.pauseAnimator();
+        }
+
+        @Override
+        public void onMusicPicFinish(final Bitmap bitmap) {
+            Log.d("aaa", "onMusicPicFinish: ");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    musicImg.setImageBitmap(bitmap);
+                }
+            });
         }
     };
 

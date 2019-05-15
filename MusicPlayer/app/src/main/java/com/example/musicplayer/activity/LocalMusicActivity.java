@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,10 +28,9 @@ import android.widget.TextView;
 
 import com.example.musicplayer.Music;
 import com.example.musicplayer.MusicAdapter;
-import com.example.musicplayer.service.MusicService;
 import com.example.musicplayer.PlayingMusicAdapter;
 import com.example.musicplayer.R;
-import com.example.musicplayer.Utils;
+import com.example.musicplayer.service.MusicService;
 import com.example.musicplayer.useLitepal.LocalMusic;
 
 import org.litepal.LitePal;
@@ -184,10 +182,8 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
 
         //从数据库获取保存的本地音乐列表
         List<LocalMusic> list = LitePal.findAll(LocalMusic.class);
-        Bitmap img = null;
         for (LocalMusic s:list){
-            if (s.img != null)  img = BitmapFactory.decodeByteArray(s.img,0,s.img.length);
-            Music m = new Music(s.songUrl, s.title, s.artist, s.duration, 0, s.imgUrl, img);
+            Music m = new Music(s.songUrl, s.title, s.artist, s.duration, 0, s.imgUrl, s.isOnlineMusic);
             localMusicList.add(m);
         }
 
@@ -259,14 +255,12 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
                 btn_playOrPause.setImageResource(R.drawable.zanting);
                 playingTitleView.setText(item.title);
                 playingArtistView.setText(item.artist);
-                if (item.img != null)   playingImgView.setImageBitmap(item.img);
             }
             else if (item != null){
                 // 当前有可播放音乐但没有播放
                 btn_playOrPause.setImageResource(R.drawable.bofang);
                 playingTitleView.setText(item.title);
                 playingArtistView.setText(item.artist);
-                if (item.img != null)   playingImgView.setImageBitmap(item.img);
             }
         }
         @Override
@@ -290,7 +284,6 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
             playingTitleView.setText(item.title);
             playingArtistView.setText(item.artist);
             btn_playOrPause.setEnabled(true);
-            if (item.img != null)   playingImgView.setImageBitmap(item.img);
         }
 
         @Override
@@ -298,6 +291,16 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
             // 播放状态变为暂停时
             btn_playOrPause.setImageResource(R.drawable.bofang);
             btn_playOrPause.setEnabled(true);
+        }
+
+        @Override
+        public void onMusicPicFinish(final Bitmap bitmap) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    playingImgView.setImageBitmap(bitmap);
+                }
+            });
         }
     };
 
@@ -344,12 +347,8 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
                         //再通过专辑Id组合出专辑的Uri地址
                         Uri albumUri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), albumId);
                         //获得图片
-                        Bitmap img = Utils.getBmp(resolver, albumUri);
-                        if (img != null)
-                            //压缩
-                            img = Bitmap.createScaledBitmap(img, 250, 250, true);
-                        Music data = new Music(musicUri.toString(), title, artist, duration, 0, "", img);
-
+                        //Bitmap img = Utils.getBmp(resolver, albumUri);
+                        Music data = new Music(musicUri.toString(), title, artist, duration, 0, albumUri.toString(), false);
                         //切换到主线程进行更新
                         publishProgress(data);
                     }
@@ -367,7 +366,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
             if (!localMusicList.contains(data)){
                 //添加到列表和数据库
                 localMusicList.add(data);
-                LocalMusic music = new LocalMusic(data.songUrl, data.title, data.artist, data.duration, data.played, data.imgUrl, Utils.byteImg(data.img));
+                LocalMusic music = new LocalMusic(data.songUrl, data.title, data.artist, data.duration, data.played, data.imgUrl, data.isOnlineMusic);
                 music.save();
             }
             //刷新UI界面

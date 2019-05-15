@@ -1,27 +1,25 @@
 package com.example.musicplayer;
 
-import android.graphics.Bitmap;
-
 import java.util.Objects;
 
 public class Music {
 
-    public String artist;   //歌手
-    public String title;     //歌曲名
-    public String songUrl;     //歌曲地址
-    public long duration;      //总时长
-    public long played; //    进度
-    public String imgUrl;
-    public Bitmap img;    //专辑图片
+    public String artist;     //歌手
+    public String title;      //歌曲名
+    public String songUrl;    //歌曲地址
+    public long duration;     //总时长
+    public long played;       //进度
+    public String imgUrl;     //专辑图片地址
+    public boolean isOnlineMusic;
 
-    public Music(String songUrl, String title, String artist, long duration, long played, String imgUrl, Bitmap img) {
+    public Music(String songUrl, String title, String artist, long duration, long played, String imgUrl, boolean isOnlineMusic) {
         this.title = title;
         this.artist = artist;
         this.songUrl = songUrl;
         this.duration = duration;
         this.played = played;
         this.imgUrl = imgUrl;
-        this.img = img;
+        this.isOnlineMusic = isOnlineMusic;
     }
 
     //重写equals方法, 使得可以用contains方法来判断列表中是否存在Music类的实例

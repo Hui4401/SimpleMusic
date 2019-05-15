@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -25,18 +24,14 @@ import android.widget.Toast;
 
 import com.example.musicplayer.Music;
 import com.example.musicplayer.MusicAdapter;
-import com.example.musicplayer.service.MusicService;
 import com.example.musicplayer.PlayingMusicAdapter;
 import com.example.musicplayer.R;
-import com.example.musicplayer.Utils;
-import com.example.musicplayer.useLitepal.OnlineMusic;
+import com.example.musicplayer.service.MusicService;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.litepal.LitePal;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -80,15 +75,9 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
                     case 60:
                         //更新一首歌曲
                         Music music = (Music) msg.obj;
-                        if (!onlinemusic_list.contains(music)) {
-                            onlinemusic_list.add(music);
-                            adapter.notifyDataSetChanged();
-                            musicCountView.setText("播放全部(共" + onlinemusic_list.size() + "首)");
-                        }
-                        break;
-                    case 61:
-                        //更新歌曲完成，开始获取图片
-                        getMusicPic();
+                        onlinemusic_list.add(music);
+                        adapter.notifyDataSetChanged();
+                        musicCountView.setText("播放全部(共" + onlinemusic_list.size() + "首)");
                         break;
                 }
             }
@@ -123,9 +112,8 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
                                 service.addPlayList(music);
                                 break;
                             case 2:
-                                //从列表和数据库中删除
+                                //从列表中删除
                                 onlinemusic_list.remove(i);
-                                LitePal.deleteAll(OnlineMusic.class, "title=?", music.title);
                                 adapter.notifyDataSetChanged();
                                 musicCountView.setText("播放全部(共"+onlinemusic_list.size()+"首)");
                                 break;
@@ -144,12 +132,6 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
         switch (v.getId()){
             case R.id.play_all:
                 service.addPlayList(onlinemusic_list);
-                break;
-            case R.id.refresh:
-                onlinemusic_list.clear();
-                adapter.notifyDataSetChanged();
-                LitePal.deleteAll(OnlineMusic.class);
-                getOlineMusic();
                 break;
             case R.id.player:
                 Intent intent = new Intent(OnlineMusicActivity.this, PlayerActivity.class);
@@ -183,7 +165,6 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
     private void initActivity(){
         //初始化控件
         ImageView btn_playAll = this.findViewById(R.id.play_all);
-        ImageView btn_refresh = this.findViewById(R.id.refresh);
         musicCountView = this.findViewById(R.id.play_all_title);
         musicListView = this.findViewById(R.id.music_list);
         RelativeLayout playerToolView = this.findViewById(R.id.player);
@@ -195,7 +176,6 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
 
         // 设置监听
         btn_playAll.setOnClickListener(this);
-        btn_refresh.setOnClickListener(this);
         playerToolView.setOnClickListener(this);
         btn_playOrPause.setOnClickListener(this);
         btn_playingList.setOnClickListener(this);
@@ -211,26 +191,17 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setSupportActionBar(toolbar);
 
-        //从数据库获取保存的本地音乐列表
-        onlinemusic_list = new ArrayList<>();
-        List<OnlineMusic> list = LitePal.findAll(OnlineMusic.class);
-        Bitmap img = null;
-        for (OnlineMusic s:list){
-            if (s.img!= null) img = BitmapFactory.decodeByteArray(s.img,0,s.img.length);
-            Music m = new Music(s.songUrl, s.title, s.artist, s.duration, 0, s.imgUrl, img);
-            onlinemusic_list.add(m);
-        }
-
-        // 在线音乐列表绑定适配器
-        adapter = new MusicAdapter(this, R.layout.music_item, onlinemusic_list);
-        musicListView.setAdapter(adapter);
-
-        musicCountView.setText("播放全部(共"+onlinemusic_list.size()+"首)");
-
         client = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)//设置连接超时时间
                 .readTimeout(10, TimeUnit.SECONDS)//设置读取超时时间
                 .build();
+
+        // 获取在线音乐
+        onlinemusic_list = new ArrayList<>();
+        adapter = new MusicAdapter(this, R.layout.music_item, onlinemusic_list);
+        musicListView.setAdapter(adapter);
+        musicCountView.setText("播放全部(共"+onlinemusic_list.size()+"首)");
+        getOlineMusic();
     }
 
 
@@ -295,14 +266,12 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
                 btn_playOrPause.setImageResource(R.drawable.zanting);
                 playingTitleView.setText(item.title);
                 playingArtistView.setText(item.artist);
-                if (item.img != null)   playingImgView.setImageBitmap(item.img);
             }
             else if (item != null){
                 //当前有可播放音乐但没有播放
                 btn_playOrPause.setImageResource(R.drawable.bofang);
                 playingTitleView.setText(item.title);
                 playingArtistView.setText(item.artist);
-                if (item.img != null)   playingImgView.setImageBitmap(item.img);
             }
         }
         @Override
@@ -326,7 +295,6 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
             playingTitleView.setText(item.title);
             playingArtistView.setText(item.artist);
             btn_playOrPause.setEnabled(true);
-            if (item.img != null)   playingImgView.setImageBitmap(item.img);
         }
 
         @Override
@@ -334,6 +302,16 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
             //播放状态变为暂停时
             btn_playOrPause.setImageResource(R.drawable.bofang);
             btn_playOrPause.setEnabled(true);
+        }
+
+        @Override
+        public void onMusicPicFinish(final Bitmap bitmap) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    playingImgView.setImageBitmap(bitmap);
+                }
+            });
         }
     };
 
@@ -370,81 +348,20 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
                         String singer = song.getString("singer");
                         String pic = "https://v1.itooi.cn/netease/pic?id=" + id + "&param=20y20";
 
-                        //如果列表中已存在同一首歌曲, 则不在获取这首歌
-                        boolean flag = false;
-                        for (Music m:onlinemusic_list){
-                            if (m.title.equals(name))  flag = true;
-                        }
-                        if (flag) continue;
-
                         //实例化一首音乐并发送到主线程更新
-                        Music music = new Music(songurl, name, singer, 0, 0, pic, null);
+                        Music music = new Music(songurl, name, singer, 0, 0, pic, true);
                         Message message = mainHanlder.obtainMessage();
                         message.what = 60;
                         message.obj = music;
                         mainHanlder.sendMessage(message);
-                        Thread.sleep(20);
+                        Thread.sleep(30);
                     }
-                    //所有音乐更新完成
-                    Message message2 = mainHanlder.obtainMessage();
-                    message2.what = 61;
-                    mainHanlder.sendMessage(message2);
                 }
                 catch (Exception e){}
             }
         });
     }
 
-    //获取音乐封面
-    private void getMusicPic(){
-
-        @SuppressLint("HandlerLeak")
-        final Handler mhandler = new Handler(){
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                switch (msg.what){
-                    case 77:
-                        //更新一首歌曲的图片
-                        Bitmap bitmap = (Bitmap) msg.obj;
-                        Music music = onlinemusic_list.get(msg.arg1);
-                        music.img = bitmap;
-                        LitePal.deleteAll(OnlineMusic.class, "title=?", music.title);
-                        OnlineMusic onlineMusic = new OnlineMusic(music.songUrl, music.title, music.artist, music.duration, music.played, music.imgUrl, Utils.byteImg(bitmap));
-                        onlineMusic.save();
-                        break;
-                }
-            }
-        };
-
-        for (int i=0; i<onlinemusic_list.size(); i++) {
-            Music music = onlinemusic_list.get(i);
-            final int index = i;
-            try {
-                Request requestPic = new Request.Builder().url(music.imgUrl).build();
-                client.newCall(requestPic).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {}
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        InputStream inputStream = response.body().byteStream();
-                        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                        //压缩
-                        bitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, true);
-                        inputStream.close();
-
-                        Message message = mhandler.obtainMessage();
-                        message.what = 77;
-                        message.obj = bitmap;
-                        message.arg1 = index;
-                        mhandler.sendMessage(message);
-                    }
-                });
-            }
-            catch (Exception e){}
-        }
-    }
     // 返回按钮
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

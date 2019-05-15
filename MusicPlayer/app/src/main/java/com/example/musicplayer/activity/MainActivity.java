@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -17,6 +16,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,10 +28,10 @@ import android.widget.TextView;
 
 import com.example.musicplayer.Music;
 import com.example.musicplayer.MusicAdapter;
-import com.example.musicplayer.service.MusicService;
 import com.example.musicplayer.PlayingMusicAdapter;
 import com.example.musicplayer.R;
 import com.example.musicplayer.Utils;
+import com.example.musicplayer.service.MusicService;
 import com.example.musicplayer.useLitepal.MyMusic;
 import com.jaeger.library.StatusBarUtil;
 
@@ -223,10 +223,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //从数据库获取我的音乐
         musicList = new ArrayList<>();
         List<MyMusic> list = LitePal.findAll(MyMusic.class);
-        Bitmap img = null;
         for (MyMusic s:list){
-            if (s.img != null)  img = BitmapFactory.decodeByteArray(s.img,0,s.img.length);
-            Music m = new Music(s.songUrl, s.title, s.artist, s.duration, 0, s.imgUrl, img);
+            Music m = new Music(s.songUrl, s.title, s.artist, s.duration, 0, s.imgUrl, s.isOnlineMusic);
             musicList.add(m);
         }
 
@@ -330,7 +328,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //当前有可播放音乐
                 playingTitleView.setText(item.title);
                 playingArtistView.setText(item.artist);
-                if (item.img != null)   playingImgView.setImageBitmap(item.img);
             }
         }
         @Override
@@ -353,7 +350,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             btn_playOrPause.setImageResource(R.drawable.zanting);
             playingTitleView.setText(item.title);
             playingArtistView.setText(item.artist);
-            if (item.img != null)   playingImgView.setImageBitmap(item.img);
         }
 
         @Override
@@ -361,6 +357,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             //播放状态变为暂停时
             btn_playOrPause.setImageResource(R.drawable.bofang);
+        }
+
+        @Override
+        public void onMusicPicFinish(final Bitmap bitmap) {
+            Log.d("aaa", "onMusicPicFinish: ");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    playingImgView.setImageBitmap(bitmap);
+                }
+            });
         }
     };
 
@@ -370,7 +377,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return;
         //添加到列表和数据库
         musicList.add(0, item);
-        MyMusic myMusic = new MyMusic(item.songUrl, item.title, item.artist, item.duration, item.played, item.imgUrl, Utils.byteImg(item.img));
+        MyMusic myMusic = new MyMusic(item.songUrl, item.title, item.artist, item.duration, item.played, item.imgUrl, item.isOnlineMusic);
         myMusic.save();
     }
 

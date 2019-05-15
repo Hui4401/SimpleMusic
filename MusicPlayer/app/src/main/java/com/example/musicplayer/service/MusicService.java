@@ -20,8 +20,16 @@ import com.example.musicplayer.useLitepal.PlayingMusic;
 import org.litepal.LitePal;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MusicService extends Service {
 
@@ -37,10 +45,17 @@ public class MusicService extends Service {
 
     private AudioManager mAudioManager;
     private  boolean mPausedByTransientLossOfFocus;
+    private OkHttpClient client;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        client = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)//设置连接超时时间
+                .readTimeout(10, TimeUnit.SECONDS)//设置读取超时时间
+                .build();
+
         player = new MediaPlayer();   //初始化播放器
         player.setOnCompletionListener(onCompletionListener);   //设置播放完成的监听器
 
@@ -79,6 +94,8 @@ public class MusicService extends Service {
         void onPlay(Music item);    //播放状态变化
 
         void onPause(Music item);   //播放状态变化
+
+        void onMusicPicFinish(Bitmap bitmap);
     }
 
     //定义binder与活动通信
@@ -150,7 +167,7 @@ public class MusicService extends Service {
             return;
         }
         playingmusic_list.add(0, item);
-        PlayingMusic playingMusic = new PlayingMusic(item.songUrl, item.title, item.artist, item.duration, item.played, item.imgUrl, Utils.byteImg(item.img));
+        PlayingMusic playingMusic = new PlayingMusic(item.songUrl, item.title, item.artist, item.duration, item.played, item.imgUrl, item.isOnlineMusic);
         playingMusic.save();
         //添加完成后，开始播放
         currentMusic = playingmusic_list.get(0);
@@ -163,7 +180,7 @@ public class MusicService extends Service {
         LitePal.deleteAll(PlayingMusic.class);
         playingmusic_list.addAll(items);
         for (Music i: items){
-            PlayingMusic playingMusic = new PlayingMusic(i.songUrl, i.title, i.artist, i.duration, i.played, i.imgUrl, Utils.byteImg(i.img));
+            PlayingMusic playingMusic = new PlayingMusic(i.songUrl, i.title, i.artist, i.duration, i.played, i.imgUrl, i.isOnlineMusic);
             playingMusic.save();
         }
         //添加完成后，开始播放
@@ -210,10 +227,8 @@ public class MusicService extends Service {
     private void initPlayList() {
         playingmusic_list = new ArrayList<>();
         List<PlayingMusic> list = LitePal.findAll(PlayingMusic.class);
-        Bitmap img = null;
         for (PlayingMusic i : list) {
-            if (i.img != null)  img = BitmapFactory.decodeByteArray(i.img,0, i.img.length);
-            Music m = new Music(i.songUrl, i.title, i.artist, i.duration, 0, i.imgUrl, img);
+            Music m = new Music(i.songUrl, i.title, i.artist, i.duration, 0, i.imgUrl, i.isOnlineMusic);
             playingmusic_list.add(m);
         }
         if (playingmusic_list.size() > 0) {
@@ -230,6 +245,8 @@ public class MusicService extends Service {
             player.setDataSource(MusicService.this, Uri.parse(item.songUrl));
             //准备播放音乐
             player.prepare();
+            //获取封面图片
+            getCurrentMusicPic(item);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -314,6 +331,30 @@ public class MusicService extends Service {
                 currentMusic = playingmusic_list.get(0);
                 playMusicItem(currentMusic, true);
             }
+        }
+    }
+
+    private void getCurrentMusicPic(Music music){
+        if (music.isOnlineMusic){
+            try {
+                Request requestPic = new Request.Builder().url(music.imgUrl).build();
+                client.newCall(requestPic).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {}
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        InputStream inputStream = response.body().byteStream();
+                        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                        inputStream.close();
+                        //将图片加载结果
+                        for (OnStateChangeListenr l : listenrList) {
+                            l.onMusicPicFinish(bitmap);
+                        }
+                    }
+                });
+            }
+            catch (Exception e){}
         }
     }
 
