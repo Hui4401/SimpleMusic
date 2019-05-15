@@ -1,4 +1,4 @@
-package com.example.musicplayer;
+package com.example.musicplayer.activity;
 
 import android.content.ComponentName;
 import android.content.DialogInterface;
@@ -15,6 +15,12 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.musicplayer.Music;
+import com.example.musicplayer.service.MusicService;
+import com.example.musicplayer.PlayingMusicAdapter;
+import com.example.musicplayer.R;
+import com.example.musicplayer.Utils;
 
 import java.util.List;
 
@@ -175,7 +181,7 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
             playingAdapter.setOnDeleteButtonListener(new PlayingMusicAdapter.onDeleteButtonListener() {
                 @Override
                 public void onClick(int i) {
-                    service.removePlayList(i);
+                    service.removeMusic(i);
                     playingAdapter.notifyDataSetChanged();
                 }
             });

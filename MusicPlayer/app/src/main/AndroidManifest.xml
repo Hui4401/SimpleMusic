@@ -16,17 +16,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".MainActivity"/>
-        <activity android:name=".LocalMusicActivity" />
-        <activity android:name=".OnlineMusicActivity" />
-        <activity android:name=".PlayerActivity" />
+        <activity android:name=".activity.MainActivity"/>
+        <activity android:name=".activity.LocalMusicActivity" />
+        <activity android:name=".activity.OnlineMusicActivity" />
+        <activity android:name=".activity.PlayerActivity" />
 
         <service
-            android:name=".MusicService"
+            android:name=".service.MusicService"
             android:enabled="true"
             android:exported="true"></service>
 
-        <activity android:name=".SplashActivity">
+        <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

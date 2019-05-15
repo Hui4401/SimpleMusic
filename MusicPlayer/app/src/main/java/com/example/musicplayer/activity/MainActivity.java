@@ -1,4 +1,4 @@
-package com.example.musicplayer;
+package com.example.musicplayer.activity;
 
 import android.content.ComponentName;
 import android.content.DialogInterface;
@@ -26,6 +26,12 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.musicplayer.Music;
+import com.example.musicplayer.MusicAdapter;
+import com.example.musicplayer.service.MusicService;
+import com.example.musicplayer.PlayingMusicAdapter;
+import com.example.musicplayer.R;
+import com.example.musicplayer.Utils;
 import com.example.musicplayer.useLitepal.MyMusic;
 import com.jaeger.library.StatusBarUtil;
 
@@ -292,7 +298,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             playingAdapter.setOnDeleteButtonListener(new PlayingMusicAdapter.onDeleteButtonListener() {
                 @Override
                 public void onClick(int i) {
-                    service.removePlayList(i);
+                    service.removeMusic(i);
                     playingAdapter.notifyDataSetChanged();
                 }
             });

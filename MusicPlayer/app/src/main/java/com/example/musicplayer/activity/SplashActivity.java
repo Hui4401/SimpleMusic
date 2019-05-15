@@ -1,10 +1,12 @@
-package com.example.musicplayer;
+package com.example.musicplayer.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
+
+import com.example.musicplayer.R;
 
 public class SplashActivity extends AppCompatActivity {
 

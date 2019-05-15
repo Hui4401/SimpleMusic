@@ -1,4 +1,4 @@
-package com.example.musicplayer;
+package com.example.musicplayer.service;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
@@ -13,6 +13,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 
+import com.example.musicplayer.Music;
+import com.example.musicplayer.Utils;
 import com.example.musicplayer.useLitepal.PlayingMusic;
 
 import org.litepal.LitePal;
@@ -46,6 +48,7 @@ public class MusicService extends Service {
         initPlayList();
 
         listenrList = new ArrayList<>(); //初始化监听器列表
+
         binder = new MusicServiceIBinder();
         mPaused = false;
 
@@ -83,39 +86,17 @@ public class MusicService extends Service {
 
         //添加一首歌曲
         public void addPlayList(Music item) {
-            if (playingmusic_list.contains(item)) {
-                currentMusic = item;
-                mPaused = false;    //添加音乐之后一定需要重新加载
-                playInner();
-                return;
-            }
-            playingmusic_list.add(0, item);
-            PlayingMusic playingMusic = new PlayingMusic(item.songUrl, item.title, item.artist, item.duration, item.played, item.imgUrl, Utils.byteImg(item.img));
-            playingMusic.save();
-            //添加完成后，开始播放
-            currentMusic = playingmusic_list.get(0);
-            mPaused = false;    //添加音乐之后一定需要重新加载
-            playInner();
+            addPlayListInner(item);
         }
 
         //添加多首歌曲
         public void addPlayList(List<Music> items) {
-            playingmusic_list.clear();
-            LitePal.deleteAll(PlayingMusic.class);
-            playingmusic_list.addAll(items);
-            for (Music i: items){
-                PlayingMusic playingMusic = new PlayingMusic(i.songUrl, i.title, i.artist, i.duration, i.played, i.imgUrl, Utils.byteImg(i.img));
-                playingMusic.save();
-            }
-            //添加完成后，开始播放
-            currentMusic = playingmusic_list.get(0);
-            playInner();
+            addPlayListInner(items);
         }
 
         //移除一首歌曲
-        public void removePlayList(int i) {
-            playingmusic_list.remove(i);
-            LitePal.deleteAll(PlayingMusic.class, "title=?", playingmusic_list.get(i).title);
+        public void removeMusic(int i) {
+            removeMusicInner(i);
         }
 
         public void play() {
@@ -127,14 +108,7 @@ public class MusicService extends Service {
         }
 
         public void playPre() {
-            int currentIndex = playingmusic_list.indexOf(currentMusic);
-            if (currentIndex - 1 >= 0) {
-                //获取当前播放（或者被加载）音乐的上一首音乐
-                //如果前面有要播放的音乐，把那首音乐设置成要播放的音乐
-                //并重新加载该音乐，开始播放
-                currentMusic = playingmusic_list.get(currentIndex - 1);
-                playMusicItem(currentMusic, true);
-            }
+            playPreInner();
         }
 
         public void pause() {
@@ -142,8 +116,19 @@ public class MusicService extends Service {
         }
 
         public void seekTo(int pos) {
-            //将音乐拖动到指定的时间
-            player.seekTo(pos);
+            seekToInner(pos);
+        }
+
+        public Music getCurrentMusic() {
+            return getCurrentMusicInner();
+        }
+
+        public boolean isPlaying() {
+            return isPlayingInner();
+        }
+
+        public List<Music> getPlayingList() {
+            return getPlayingListInner();
         }
 
         //有活动注册监听器时将它加到监听器列表
@@ -155,21 +140,70 @@ public class MusicService extends Service {
         public void unregisterOnStateChangeListener(OnStateChangeListenr l) {
             listenrList.remove(l);
         }
+    }
 
-        public Music getCurrentMusic() {
-            //返回当前正加载好的音乐
-            return currentMusic;
+    private void addPlayListInner(Music item){
+        if (playingmusic_list.contains(item)) {
+            currentMusic = item;
+            mPaused = false;    //添加音乐之后一定需要重新加载
+            playInner();
+            return;
         }
+        playingmusic_list.add(0, item);
+        PlayingMusic playingMusic = new PlayingMusic(item.songUrl, item.title, item.artist, item.duration, item.played, item.imgUrl, Utils.byteImg(item.img));
+        playingMusic.save();
+        //添加完成后，开始播放
+        currentMusic = playingmusic_list.get(0);
+        mPaused = false;    //添加音乐之后一定需要重新加载
+        playInner();
+    }
 
-        public boolean isPlaying() {
-            //返回当前的播放器是否正在播放音乐
-            return player.isPlaying();
+    private void addPlayListInner(List<Music> items){
+        playingmusic_list.clear();
+        LitePal.deleteAll(PlayingMusic.class);
+        playingmusic_list.addAll(items);
+        for (Music i: items){
+            PlayingMusic playingMusic = new PlayingMusic(i.songUrl, i.title, i.artist, i.duration, i.played, i.imgUrl, Utils.byteImg(i.img));
+            playingMusic.save();
         }
+        //添加完成后，开始播放
+        currentMusic = playingmusic_list.get(0);
+        playInner();
+    }
 
-        public List<Music> getPlayingList() {
-            return playingmusic_list;
+    private void removeMusicInner(int i){
+        playingmusic_list.remove(i);
+        LitePal.deleteAll(PlayingMusic.class, "title=?", playingmusic_list.get(i).title);
+    }
+
+    private void playPreInner(){
+        int currentIndex = playingmusic_list.indexOf(currentMusic);
+        if (currentIndex - 1 >= 0) {
+            //获取当前播放（或者被加载）音乐的上一首音乐
+            //如果前面有要播放的音乐，把那首音乐设置成要播放的音乐
+            //并重新加载该音乐，开始播放
+            currentMusic = playingmusic_list.get(currentIndex - 1);
+            playMusicItem(currentMusic, true);
         }
+    }
 
+    private void seekToInner(int pos){
+        //将音乐拖动到指定的时间
+        player.seekTo(pos);
+    }
+
+    private Music getCurrentMusicInner(){
+        //返回当前正加载好的音乐
+        return currentMusic;
+    }
+
+    private boolean isPlayingInner(){
+        //返回当前的播放器是否正在播放音乐
+        return player.isPlaying();
+    }
+
+    public List<Music> getPlayingListInner(){
+        return playingmusic_list;
     }
 
     //初始化播放列表
@@ -332,6 +366,7 @@ public class MusicService extends Service {
         return binder;
     }
 
+    //焦点控制
     private AudioManager.OnAudioFocusChangeListener mAudioFocusListener = new AudioManager.OnAudioFocusChangeListener(){
 
         public void onAudioFocusChange(int focusChange) {
