@@ -2,7 +2,7 @@
 
 ## 1. 开发环境
 - AndroidStudio 3.2
-- Android 5.0
+- AndroidSDK 5.0
 - gradle 4.6
 
 ## 2. 模块划分
