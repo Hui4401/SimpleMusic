@@ -90,7 +90,7 @@ public class MusicService extends Service {
 
     //对外监听器接口
     public interface OnStateChangeListenr {
-        void onPlayProgressChange(long played);  //播放进度变化
+        void onPlayProgressChange(long played, long duration);  //播放进度变化
 
         void onPlay(Music item);    //播放状态变化
 
@@ -172,7 +172,7 @@ public class MusicService extends Service {
             return;
         }
         playingmusic_list.add(0, item);
-        PlayingMusic playingMusic = new PlayingMusic(item.songUrl, item.title, item.artist, item.duration, item.imgUrl, item.isOnlineMusic);
+        PlayingMusic playingMusic = new PlayingMusic(item.songUrl, item.title, item.artist, item.imgUrl, item.isOnlineMusic);
         playingMusic.save();
         //添加完成后，开始播放
         currentMusic = playingmusic_list.get(0);
@@ -185,7 +185,7 @@ public class MusicService extends Service {
         LitePal.deleteAll(PlayingMusic.class);
         playingmusic_list.addAll(items);
         for (Music i: items){
-            PlayingMusic playingMusic = new PlayingMusic(i.songUrl, i.title, i.artist, i.duration, i.imgUrl, i.isOnlineMusic);
+            PlayingMusic playingMusic = new PlayingMusic(i.songUrl, i.title, i.artist, i.imgUrl, i.isOnlineMusic);
             playingMusic.save();
         }
         //添加完成后，开始播放
@@ -238,7 +238,7 @@ public class MusicService extends Service {
         playingmusic_list = new ArrayList<>();
         List<PlayingMusic> list = LitePal.findAll(PlayingMusic.class);
         for (PlayingMusic i : list) {
-            Music m = new Music(i.songUrl, i.title, i.artist, i.duration, i.imgUrl, i.isOnlineMusic);
+            Music m = new Music(i.songUrl, i.title, i.artist, i.imgUrl, i.isOnlineMusic);
             playingmusic_list.add(m);
         }
         if (playingmusic_list.size() > 0) {
@@ -278,7 +278,6 @@ public class MusicService extends Service {
 
         //将播放的状态通过监听器通知给监听者
         for (OnStateChangeListenr l : listenrList) {
-            item.duration = player.getDuration();
             l.onPlay(item);
         }
         //设置为非暂停播放状态
@@ -395,10 +394,10 @@ public class MusicService extends Service {
                 case MSG_PROGRESS_UPDATE: {
                     //当前播放进度
                     long played = player.getCurrentPosition();
-
+                    long duration = player.getDuration();
                     //通知监听者当前的播放进度
                     for (OnStateChangeListenr l : listenrList) {
-                        l.onPlayProgressChange(played);
+                        l.onPlayProgressChange(played, duration);
                     }
 
                     //间隔一秒发送一次更新播放进度的消息

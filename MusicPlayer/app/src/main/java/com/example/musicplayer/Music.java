@@ -7,15 +7,13 @@ public class Music {
     public String artist;     //歌手
     public String title;      //歌曲名
     public String songUrl;    //歌曲地址
-    public long duration;     //总时长
     public String imgUrl;     //专辑图片地址
     public boolean isOnlineMusic;
 
-    public Music(String songUrl, String title, String artist, long duration, String imgUrl, boolean isOnlineMusic) {
+    public Music(String songUrl, String title, String artist, String imgUrl, boolean isOnlineMusic) {
         this.title = title;
         this.artist = artist;
         this.songUrl = songUrl;
-        this.duration = duration;
         this.imgUrl = imgUrl;
         this.isOnlineMusic = isOnlineMusic;
     }

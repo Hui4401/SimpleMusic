@@ -183,7 +183,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
         //从数据库获取保存的本地音乐列表
         List<LocalMusic> list = LitePal.findAll(LocalMusic.class);
         for (LocalMusic s:list){
-            Music m = new Music(s.songUrl, s.title, s.artist, s.duration, s.imgUrl, s.isOnlineMusic);
+            Music m = new Music(s.songUrl, s.title, s.artist, s.imgUrl, s.isOnlineMusic);
             localMusicList.add(m);
         }
 
@@ -279,7 +279,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
     private MusicService.OnStateChangeListenr listenr = new MusicService.OnStateChangeListenr() {
 
         @Override
-        public void onPlayProgressChange(long played) {}
+        public void onPlayProgressChange(long played, long duration) {}
 
         @Override
         public void onPlay(Music item) {
@@ -308,13 +308,11 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
         }
     };
 
-    // 获取本地音乐的任务类
+    // 异步获取本地所有音乐
     @SuppressLint("StaticFieldLeak")
     private class MusicUpdateTask extends AsyncTask<Object, Music, Void> {
 
-        //异步获取本地所有音乐
-
-        ////开始获取, 显示一个进度条
+        // 开始获取, 显示一个进度条
         @Override
         protected void onPreExecute(){
             progressDialog = new ProgressDialog(LocalMusicActivity.this);
@@ -323,9 +321,10 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
             progressDialog.show();
         }
 
-        //工作线程，处理耗时的查询音乐的操作
+        // 子线程中获取音乐
         @Override
         protected Void doInBackground(Object... params) {
+
             String[] searchKey = new String[]{
                     MediaStore.Audio.Media._ID,     //对应文件在数据库中的检索ID
                     MediaStore.Audio.Media.TITLE,   //标题
@@ -352,7 +351,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
                         Uri albumUri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), albumId);
                         //获得图片
                         //Bitmap img = Utils.getBmp(resolver, albumUri);
-                        Music data = new Music(musicUri.toString(), title, artist, duration, albumUri.toString(), false);
+                        Music data = new Music(musicUri.toString(), title, artist, albumUri.toString(), false);
                         //切换到主线程进行更新
                         publishProgress(data);
                     }
@@ -370,7 +369,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
             if (!localMusicList.contains(data)){
                 //添加到列表和数据库
                 localMusicList.add(data);
-                LocalMusic music = new LocalMusic(data.songUrl, data.title, data.artist, data.duration, data.imgUrl, data.isOnlineMusic);
+                LocalMusic music = new LocalMusic(data.songUrl, data.title, data.artist, data.imgUrl, data.isOnlineMusic);
                 music.save();
             }
             //刷新UI界面
@@ -386,7 +385,6 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    // 显示返回按钮
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){

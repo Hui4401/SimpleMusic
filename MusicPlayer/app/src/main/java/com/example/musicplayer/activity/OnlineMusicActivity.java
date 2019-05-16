@@ -290,7 +290,7 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
     private MusicService.OnStateChangeListenr listenr = new MusicService.OnStateChangeListenr() {
 
         @Override
-        public void onPlayProgressChange(long played) {}
+        public void onPlayProgressChange(long played, long duration) {}
 
         @Override
         public void onPlay(Music item) {
@@ -353,7 +353,7 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
                         String pic = "https://v1.itooi.cn/netease/pic?id=" + id + "&param=20y20";
 
                         //实例化一首音乐并发送到主线程更新
-                        Music music = new Music(songurl, name, singer, 0, pic, true);
+                        Music music = new Music(songurl, name, singer, pic, true);
                         Message message = mainHanlder.obtainMessage();
                         message.what = 60;
                         message.obj = music;

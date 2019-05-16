@@ -120,7 +120,7 @@
             android:id="@+id/ivLast"
             android:layout_height="60dp"
             android:layout_width="60dp"
-            android:src="@drawable/ic_last" />
+            android:src="@drawable/ic_pre" />
 
         <!--设置中间暂停和播放的按钮的布局-->
         <ImageView

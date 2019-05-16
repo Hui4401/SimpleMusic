@@ -223,8 +223,6 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
                 artist.setText(item.artist);
                 ivplayorpause.setImageResource(R.drawable.ic_pause);
                 rotateAnimator.playAnimator();
-                seekBar.setMax((int) item.duration);
-                total_time.setText(Utils.formatTime(item.duration));
             }
 
             else {
@@ -232,8 +230,6 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
                 title.setText(item.title);
                 artist.setText(item.artist);
                 ivplayorpause.setImageResource(R.drawable.ic_play);
-                seekBar.setMax((int) item.duration);
-                total_time.setText(Utils.formatTime(item.duration));
             }
 
             Bitmap img = ((MusicService.MusicServiceIBinder) service).getCurrentMusicPic();
@@ -253,8 +249,9 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
     private MusicService.OnStateChangeListenr listenr = new MusicService.OnStateChangeListenr() {
 
         @Override
-        public void onPlayProgressChange(long played) {
-            //每隔一秒通知播放进度
+        public void onPlayProgressChange(long played, long duration) {
+            seekBar.setMax((int) duration);
+            total_time.setText(Utils.formatTime(duration));
             now_time.setText(Utils.formatTime(played));
             seekBar.setProgress((int) played);
         }
@@ -266,8 +263,6 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
             artist.setText(item.artist);
             ivplayorpause.setImageResource(R.drawable.ic_pause);
             rotateAnimator.playAnimator();
-            seekBar.setMax((int) item.duration);
-            total_time.setText(Utils.formatTime(item.duration));
         }
 
         @Override

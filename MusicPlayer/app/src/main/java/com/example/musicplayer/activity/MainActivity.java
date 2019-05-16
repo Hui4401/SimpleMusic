@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         musicList = new ArrayList<>();
         List<MyMusic> list = LitePal.findAll(MyMusic.class);
         for (MyMusic s:list){
-            Music m = new Music(s.songUrl, s.title, s.artist, s.duration, s.imgUrl, s.isOnlineMusic);
+            Music m = new Music(s.songUrl, s.title, s.artist, s.imgUrl, s.isOnlineMusic);
             musicList.add(m);
         }
 
@@ -345,7 +345,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private MusicService.OnStateChangeListenr listenr = new MusicService.OnStateChangeListenr() {
 
         @Override
-        public void onPlayProgressChange(long played) {}
+        public void onPlayProgressChange(long played, long duration) {}
 
         @Override
         public void onPlay(Music item) {
@@ -379,7 +379,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return;
         //添加到列表和数据库
         musicList.add(0, item);
-        MyMusic myMusic = new MyMusic(item.songUrl, item.title, item.artist, item.duration, item.imgUrl, item.isOnlineMusic);
+        MyMusic myMusic = new MyMusic(item.songUrl, item.title, item.artist, item.imgUrl, item.isOnlineMusic);
         myMusic.save();
     }
 
