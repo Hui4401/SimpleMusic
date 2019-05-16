@@ -16,7 +16,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -224,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         musicList = new ArrayList<>();
         List<MyMusic> list = LitePal.findAll(MyMusic.class);
         for (MyMusic s:list){
-            Music m = new Music(s.songUrl, s.title, s.artist, s.duration, 0, s.imgUrl, s.isOnlineMusic);
+            Music m = new Music(s.songUrl, s.title, s.artist, s.duration, s.imgUrl, s.isOnlineMusic);
             musicList.add(m);
         }
 
@@ -329,6 +328,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 playingTitleView.setText(item.title);
                 playingArtistView.setText(item.artist);
             }
+
+            Bitmap img = ((MusicService.MusicServiceIBinder) service).getCurrentMusicPic();
+            if (img != null){
+                playingImgView.setImageBitmap(img);
+            }
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -341,8 +345,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private MusicService.OnStateChangeListenr listenr = new MusicService.OnStateChangeListenr() {
 
         @Override
-        public void onPlayProgressChange(Music item) {
-        }
+        public void onPlayProgressChange(long played) {}
 
         @Override
         public void onPlay(Music item) {
@@ -353,7 +356,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         @Override
-        public void onPause(Music item) {
+        public void onPause() {
 
             //播放状态变为暂停时
             btn_playOrPause.setImageResource(R.drawable.bofang);
@@ -361,7 +364,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onMusicPicFinish(final Bitmap bitmap) {
-            Log.d("aaa", "onMusicPicFinish: ");
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -377,7 +379,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return;
         //添加到列表和数据库
         musicList.add(0, item);
-        MyMusic myMusic = new MyMusic(item.songUrl, item.title, item.artist, item.duration, item.played, item.imgUrl, item.isOnlineMusic);
+        MyMusic myMusic = new MyMusic(item.songUrl, item.title, item.artist, item.duration, item.imgUrl, item.isOnlineMusic);
         myMusic.save();
     }
 

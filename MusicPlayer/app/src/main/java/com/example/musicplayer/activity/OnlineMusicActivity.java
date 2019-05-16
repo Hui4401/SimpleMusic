@@ -273,6 +273,11 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
                 playingTitleView.setText(item.title);
                 playingArtistView.setText(item.artist);
             }
+
+            Bitmap img = ((MusicService.MusicServiceIBinder) service).getCurrentMusicPic();
+            if (img != null){
+                playingImgView.setImageBitmap(img);
+            }
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -285,8 +290,7 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
     private MusicService.OnStateChangeListenr listenr = new MusicService.OnStateChangeListenr() {
 
         @Override
-        public void onPlayProgressChange(Music item) {
-        }
+        public void onPlayProgressChange(long played) {}
 
         @Override
         public void onPlay(Music item) {
@@ -298,7 +302,7 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
         }
 
         @Override
-        public void onPause(Music item) {
+        public void onPause() {
             //播放状态变为暂停时
             btn_playOrPause.setImageResource(R.drawable.bofang);
             btn_playOrPause.setEnabled(true);
@@ -349,7 +353,7 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
                         String pic = "https://v1.itooi.cn/netease/pic?id=" + id + "&param=20y20";
 
                         //实例化一首音乐并发送到主线程更新
-                        Music music = new Music(songurl, name, singer, 0, 0, pic, true);
+                        Music music = new Music(songurl, name, singer, 0, pic, true);
                         Message message = mainHanlder.obtainMessage();
                         message.what = 60;
                         message.obj = music;

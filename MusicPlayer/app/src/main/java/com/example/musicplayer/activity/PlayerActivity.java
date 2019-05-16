@@ -10,7 +10,6 @@ import android.os.IBinder;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,10 +18,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.musicplayer.Music;
-import com.example.musicplayer.service.MusicService;
 import com.example.musicplayer.PlayingMusicAdapter;
 import com.example.musicplayer.R;
 import com.example.musicplayer.Utils;
+import com.example.musicplayer.service.MusicService;
 
 import java.util.List;
 
@@ -225,8 +224,6 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
                 ivplayorpause.setImageResource(R.drawable.ic_pause);
                 rotateAnimator.playAnimator();
                 seekBar.setMax((int) item.duration);
-                seekBar.setProgress((int) item.played);
-                now_time.setText(Utils.formatTime(item.played));
                 total_time.setText(Utils.formatTime(item.duration));
             }
 
@@ -236,9 +233,12 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
                 artist.setText(item.artist);
                 ivplayorpause.setImageResource(R.drawable.ic_play);
                 seekBar.setMax((int) item.duration);
-                seekBar.setProgress((int) item.played);
-                now_time.setText(Utils.formatTime(item.played));
                 total_time.setText(Utils.formatTime(item.duration));
+            }
+
+            Bitmap img = ((MusicService.MusicServiceIBinder) service).getCurrentMusicPic();
+            if (img != null){
+                musicImg.setImageBitmap(img);
             }
         }
 
@@ -253,10 +253,10 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
     private MusicService.OnStateChangeListenr listenr = new MusicService.OnStateChangeListenr() {
 
         @Override
-        public void onPlayProgressChange(Music item) {
+        public void onPlayProgressChange(long played) {
             //每隔一秒通知播放进度
-            now_time.setText(Utils.formatTime(item.played));
-            seekBar.setProgress((int) item.played);
+            now_time.setText(Utils.formatTime(played));
+            seekBar.setProgress((int) played);
         }
 
         @Override
@@ -267,13 +267,11 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
             ivplayorpause.setImageResource(R.drawable.ic_pause);
             rotateAnimator.playAnimator();
             seekBar.setMax((int) item.duration);
-            seekBar.setProgress((int) item.played);
-            now_time.setText(Utils.formatTime(item.played));
             total_time.setText(Utils.formatTime(item.duration));
         }
 
         @Override
-        public void onPause(Music item) {
+        public void onPause() {
             //变为暂停状态时
             ivplayorpause.setImageResource(R.drawable.ic_play);
             rotateAnimator.pauseAnimator();
@@ -281,7 +279,6 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
 
         @Override
         public void onMusicPicFinish(final Bitmap bitmap) {
-            Log.d("aaa", "onMusicPicFinish: ");
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

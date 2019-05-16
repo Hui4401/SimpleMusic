@@ -46,6 +46,7 @@ public class MusicService extends Service {
     private AudioManager mAudioManager;
     private  boolean mPausedByTransientLossOfFocus;
     private OkHttpClient client;
+    private Bitmap currentMusicPic;
 
     @Override
     public void onCreate() {
@@ -89,11 +90,11 @@ public class MusicService extends Service {
 
     //对外监听器接口
     public interface OnStateChangeListenr {
-        void onPlayProgressChange(Music item);  //播放进度变化
+        void onPlayProgressChange(long played);  //播放进度变化
 
         void onPlay(Music item);    //播放状态变化
 
-        void onPause(Music item);   //播放状态变化
+        void onPause();   //播放状态变化
 
         void onMusicPicFinish(Bitmap bitmap);
     }
@@ -140,6 +141,10 @@ public class MusicService extends Service {
             return getCurrentMusicInner();
         }
 
+        public Bitmap getCurrentMusicPic() {
+            return getCurrentMusicPicInner();
+        }
+
         public boolean isPlaying() {
             return isPlayingInner();
         }
@@ -167,7 +172,7 @@ public class MusicService extends Service {
             return;
         }
         playingmusic_list.add(0, item);
-        PlayingMusic playingMusic = new PlayingMusic(item.songUrl, item.title, item.artist, item.duration, item.played, item.imgUrl, item.isOnlineMusic);
+        PlayingMusic playingMusic = new PlayingMusic(item.songUrl, item.title, item.artist, item.duration, item.imgUrl, item.isOnlineMusic);
         playingMusic.save();
         //添加完成后，开始播放
         currentMusic = playingmusic_list.get(0);
@@ -180,7 +185,7 @@ public class MusicService extends Service {
         LitePal.deleteAll(PlayingMusic.class);
         playingmusic_list.addAll(items);
         for (Music i: items){
-            PlayingMusic playingMusic = new PlayingMusic(i.songUrl, i.title, i.artist, i.duration, i.played, i.imgUrl, i.isOnlineMusic);
+            PlayingMusic playingMusic = new PlayingMusic(i.songUrl, i.title, i.artist, i.duration, i.imgUrl, i.isOnlineMusic);
             playingMusic.save();
         }
         //添加完成后，开始播放
@@ -189,8 +194,8 @@ public class MusicService extends Service {
     }
 
     private void removeMusicInner(int i){
-        playingmusic_list.remove(i);
         LitePal.deleteAll(PlayingMusic.class, "title=?", playingmusic_list.get(i).title);
+        playingmusic_list.remove(i);
     }
 
     private void playPreInner(){
@@ -214,6 +219,11 @@ public class MusicService extends Service {
         return currentMusic;
     }
 
+    private Bitmap getCurrentMusicPicInner(){
+        //返回当前正加载好的音乐
+        return currentMusicPic;
+    }
+
     private boolean isPlayingInner(){
         //返回当前的播放器是否正在播放音乐
         return player.isPlaying();
@@ -228,7 +238,7 @@ public class MusicService extends Service {
         playingmusic_list = new ArrayList<>();
         List<PlayingMusic> list = LitePal.findAll(PlayingMusic.class);
         for (PlayingMusic i : list) {
-            Music m = new Music(i.songUrl, i.title, i.artist, i.duration, 0, i.imgUrl, i.isOnlineMusic);
+            Music m = new Music(i.songUrl, i.title, i.artist, i.duration, i.imgUrl, i.isOnlineMusic);
             playingmusic_list.add(m);
         }
         if (playingmusic_list.size() > 0) {
@@ -245,6 +255,7 @@ public class MusicService extends Service {
             player.setDataSource(MusicService.this, Uri.parse(item.songUrl));
             //准备播放音乐
             player.prepare();
+            currentMusicPic = null;
             //获取封面图片
             getCurrentMusicPic(item);
         } catch (IOException e) {
@@ -267,7 +278,6 @@ public class MusicService extends Service {
 
         //将播放的状态通过监听器通知给监听者
         for (OnStateChangeListenr l : listenrList) {
-            item.played = player.getCurrentPosition();
             item.duration = player.getDuration();
             l.onPlay(item);
         }
@@ -302,12 +312,10 @@ public class MusicService extends Service {
         player.pause();
         //将播放状态的改变通知给监听者
         for (OnStateChangeListenr l : listenrList) {
-            l.onPause(currentMusic);
+            l.onPause();
         }
         //设置为暂停播放状态
         mPaused = true;
-        //停止发送更新消息
-        handler.removeMessages(MSG_PROGRESS_UPDATE);
     }
 
     private void playNextInner() {
@@ -347,6 +355,7 @@ public class MusicService extends Service {
                         InputStream inputStream = response.body().byteStream();
                         Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                         inputStream.close();
+                        currentMusicPic = bitmap;
                         //将图片加载结果
                         for (OnStateChangeListenr l : listenrList) {
                             l.onMusicPicFinish(bitmap);
@@ -384,13 +393,12 @@ public class MusicService extends Service {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_PROGRESS_UPDATE: {
-                    //将音乐的时长和当前播放的进度保存到数据结构中，
-                    currentMusic.played = player.getCurrentPosition();
-                    currentMusic.duration = player.getDuration();
+                    //当前播放进度
+                    long played = player.getCurrentPosition();
 
                     //通知监听者当前的播放进度
                     for (OnStateChangeListenr l : listenrList) {
-                        l.onPlayProgressChange(currentMusic);
+                        l.onPlayProgressChange(played);
                     }
 
                     //间隔一秒发送一次更新播放进度的消息
