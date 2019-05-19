@@ -9,7 +9,7 @@
         android:id="@+id/nav_img"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:src="@drawable/s"
+        android:src="@drawable/defult_user_img"
         android:layout_centerVertical="true"
         android:layout_marginStart="20dp"/>
 

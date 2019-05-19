@@ -20,7 +20,7 @@
         android:layout_height="225dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="120dp"
-        android:src="@raw/ic_music1"
+        android:src="@drawable/defult_music_img"
         />
 
     <!--唱针-->
@@ -28,7 +28,7 @@
         android:id="@+id/ivNeedle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="180dp"
+        android:layout_marginStart="160dp"
         android:layout_marginTop="-15dp"
         android:src="@drawable/ic_needle"/>
 

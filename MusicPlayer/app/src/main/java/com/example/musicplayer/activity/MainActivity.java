@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -25,6 +24,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.musicplayer.Music;
 import com.example.musicplayer.MusicAdapter;
 import com.example.musicplayer.PlayingMusicAdapter;
@@ -45,10 +45,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Toolbar toolbar;
     private ListView musicListView;
-    private ImageView playingImgView;
     private TextView playingTitleView;
     private TextView playingArtistView;
-    private ImageView btn_playOrPause;
+    private ImageView playingImgView;
+    private ImageView btnPlayOrPause;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private TextView musicCountView;
@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SharedPreferences.Editor editor = getSharedPreferences("data", MODE_PRIVATE).edit();
         editor.putInt("count", Utils.count);
         editor.apply();
+        Glide.with(getApplicationContext()).pauseAllRequests();
     }
 
     // 显示菜单
@@ -187,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         playingImgView = this.findViewById(R.id.playing_img);
         playingTitleView = this.findViewById(R.id.playing_title);
         playingArtistView = this.findViewById(R.id.playing_artist);
-        btn_playOrPause = this.findViewById(R.id.play_or_pause);
+        btnPlayOrPause = this.findViewById(R.id.play_or_pause);
         ImageView btn_playingList = this.findViewById(R.id.playing_list);
         drawerLayout = this.findViewById(R.id.drawer);
         navigationView = this.findViewById(R.id.nav_view);
@@ -196,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // 设置监听
         playerToolView.setOnClickListener(this);
-        btn_playOrPause.setOnClickListener(this);
+        btnPlayOrPause.setOnClickListener(this);
         btn_playingList.setOnClickListener(this);
 
         // 申请读写权限
@@ -323,15 +324,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ((MusicService.MusicServiceIBinder) service).registerOnStateChangeListener(listenr);
 
             Music item = ((MusicService.MusicServiceIBinder) service).getCurrentMusic();
+
             if(item != null){
                 //当前有可播放音乐
                 playingTitleView.setText(item.title);
                 playingArtistView.setText(item.artist);
-            }
-
-            Bitmap img = ((MusicService.MusicServiceIBinder) service).getCurrentMusicPic();
-            if (img != null){
-                playingImgView.setImageBitmap(img);
+                Glide.with(getApplicationContext())
+                        .load(item.imgUrl)
+                        .placeholder(R.drawable.defult_music_img)
+                        .error(R.drawable.defult_music_img)
+                        .into(playingImgView);
             }
         }
         @Override
@@ -350,26 +352,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onPlay(Music item) {
             //播放状态变为播放时
-            btn_playOrPause.setImageResource(R.drawable.zanting);
+            btnPlayOrPause.setImageResource(R.drawable.zanting);
             playingTitleView.setText(item.title);
             playingArtistView.setText(item.artist);
+            Glide.with(getApplicationContext())
+                    .load(item.imgUrl)
+                    .placeholder(R.drawable.defult_music_img)
+                    .error(R.drawable.defult_music_img)
+                    .into(playingImgView);
         }
 
         @Override
         public void onPause() {
-
             //播放状态变为暂停时
-            btn_playOrPause.setImageResource(R.drawable.bofang);
-        }
-
-        @Override
-        public void onMusicPicFinish(final Bitmap bitmap) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    playingImgView.setImageBitmap(bitmap);
-                }
-            });
+            btnPlayOrPause.setImageResource(R.drawable.bofang);
         }
     };
 

@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -22,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.musicplayer.Music;
 import com.example.musicplayer.MusicAdapter;
 import com.example.musicplayer.PlayingMusicAdapter;
@@ -46,10 +46,10 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
 
     private TextView musicCountView;
     private ListView musicListView;
-    private ImageView playingImgView;
     private TextView playingTitleView;
     private TextView playingArtistView;
-    private ImageView btn_playOrPause;
+    private ImageView playingImgView;
+    private ImageView btnPlayOrPause;
 
     private List<Music> onlinemusic_list;
     private MusicService.MusicServiceIBinder service;
@@ -171,13 +171,13 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
         playingImgView = this.findViewById(R.id.playing_img);
         playingTitleView = this.findViewById(R.id.playing_title);
         playingArtistView = this.findViewById(R.id.playing_artist);
-        btn_playOrPause = this.findViewById(R.id.play_or_pause);
+        btnPlayOrPause = this.findViewById(R.id.play_or_pause);
         ImageView btn_playingList = this.findViewById(R.id.playing_list);
 
         // 设置监听
         btn_playAll.setOnClickListener(this);
         playerToolView.setOnClickListener(this);
-        btn_playOrPause.setOnClickListener(this);
+        btnPlayOrPause.setOnClickListener(this);
         btn_playingList.setOnClickListener(this);
 
         //绑定播放服务
@@ -263,20 +263,25 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
 
             if (((MusicService.MusicServiceIBinder) service).isPlaying()){
                 //如果正在播放音乐, 更新控制栏信息
-                btn_playOrPause.setImageResource(R.drawable.zanting);
+                btnPlayOrPause.setImageResource(R.drawable.zanting);
                 playingTitleView.setText(item.title);
                 playingArtistView.setText(item.artist);
+                Glide.with(getApplicationContext())
+                        .load(item.imgUrl)
+                        .placeholder(R.drawable.defult_music_img)
+                        .error(R.drawable.defult_music_img)
+                        .into(playingImgView);
             }
             else if (item != null){
                 //当前有可播放音乐但没有播放
-                btn_playOrPause.setImageResource(R.drawable.bofang);
+                btnPlayOrPause.setImageResource(R.drawable.bofang);
                 playingTitleView.setText(item.title);
                 playingArtistView.setText(item.artist);
-            }
-
-            Bitmap img = ((MusicService.MusicServiceIBinder) service).getCurrentMusicPic();
-            if (img != null){
-                playingImgView.setImageBitmap(img);
+                Glide.with(getApplicationContext())
+                        .load(item.imgUrl)
+                        .placeholder(R.drawable.defult_music_img)
+                        .error(R.drawable.defult_music_img)
+                        .into(playingImgView);
             }
         }
         @Override
@@ -295,27 +300,22 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
         @Override
         public void onPlay(Music item) {
             //播放状态变为播放时
-            btn_playOrPause.setImageResource(R.drawable.zanting);
+            btnPlayOrPause.setImageResource(R.drawable.zanting);
             playingTitleView.setText(item.title);
             playingArtistView.setText(item.artist);
-            btn_playOrPause.setEnabled(true);
+            btnPlayOrPause.setEnabled(true);
+            Glide.with(getApplicationContext())
+                    .load(item.imgUrl)
+                    .placeholder(R.drawable.defult_music_img)
+                    .error(R.drawable.defult_music_img)
+                    .into(playingImgView);
         }
 
         @Override
         public void onPause() {
             //播放状态变为暂停时
-            btn_playOrPause.setImageResource(R.drawable.bofang);
-            btn_playOrPause.setEnabled(true);
-        }
-
-        @Override
-        public void onMusicPicFinish(final Bitmap bitmap) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    playingImgView.setImageBitmap(bitmap);
-                }
-            });
+            btnPlayOrPause.setImageResource(R.drawable.bofang);
+            btnPlayOrPause.setEnabled(true);
         }
     };
 

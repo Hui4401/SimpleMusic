@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -15,12 +15,10 @@ public class MusicAdapter extends BaseAdapter {
     private List<Music> mData;
     private LayoutInflater mInflater;
     private int mResource;
-    private Context mContext;
     private onMoreButtonListener monMoreButtonListener;
 
     public MusicAdapter(Context context, int resId, List<Music> data)
     {
-        mContext = context;
         mData = data;
         mInflater = LayoutInflater.from(context);
         mResource = resId;
@@ -74,7 +72,7 @@ public class MusicAdapter extends BaseAdapter {
     class ViewHolder{
         TextView title;
         TextView artist;
-        ImageView more;
+        LinearLayout more;
     }
 
     public interface onMoreButtonListener {
