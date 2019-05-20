@@ -1,10 +1,12 @@
 package com.example.musicplayer.activity;
 
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -55,7 +57,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static List<Music> musicList;
     private MusicAdapter musicAdapter;
-    private MusicService.MusicServiceIBinder service;
+    private SharedPreferences spf;
+    private MusicService.MusicServiceBinder serviceBinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,15 +66,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 初始化
+        // 初始化活动
         initActivity();
+
+        // 初始化音乐列表
+        initMusicList();
+
+        // 初始化配置
+        initsettings();
 
         // 点击列表项播放音乐
         musicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Music music = musicList.get(position);
-                service.addPlayList(music);
+                serviceBinder.addPlayList(music);
             }
         });
 
@@ -91,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which){
                             case 0:
-                                service.addPlayList(music);
+                                serviceBinder.addPlayList(music);
                                 break;
                             case 1:
                                 //从列表和数据库中删除
@@ -119,38 +128,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onDestroy();
         //清空列表
         musicList.clear();
-        //解除与Servie的绑定
-        unbindService(mServiceConnection);
-        //存储累计听歌数量
-        SharedPreferences.Editor editor = getSharedPreferences("data", MODE_PRIVATE).edit();
-        editor.putInt("count", Utils.count);
-        editor.apply();
         Glide.with(getApplicationContext()).pauseAllRequests();
-    }
-
-    // 显示菜单
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    // 菜单点击事件
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.local_music:
-                Intent intent1 = new Intent(MainActivity.this, LocalMusicActivity.class);
-                startActivity(intent1);
-                break;
-            case R.id.online_music:
-                Intent intent2 = new Intent(MainActivity.this, OnlineMusicActivity.class);
-                startActivity(intent2);
-                break;
-            default:
-        }
-        return true;
+        saveSettings();
     }
 
     // 监听组件
@@ -164,13 +143,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 overridePendingTransition(R.anim.bottom_in, R.anim.bottom_silent);
                 break;
             case R.id.play_or_pause:
-                // 播放或暂停
-                if (service.isPlaying()){
-                    service.pause();
-
-                }else {
-                    service.play();
-                }
+                serviceBinder.playOrPause();
                 break;
             case R.id.playing_list:
                 // 显示正在播放列表
@@ -182,6 +155,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     // 初始化活动
     private void initActivity(){
+        // 申请读写权限
+        ActivityCompat.requestPermissions(MainActivity.this,
+                new String[]{WRITE_EXTERNAL_STORAGE}, 1);
+
         //绑定控件
         musicListView = this.findViewById(R.id.music_list);
         RelativeLayout playerToolView = this.findViewById(R.id.player);
@@ -199,10 +176,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         playerToolView.setOnClickListener(this);
         btnPlayOrPause.setOnClickListener(this);
         btn_playingList.setOnClickListener(this);
-
-        // 申请读写权限
-        ActivityCompat.requestPermissions(MainActivity.this,
-                new String[]{WRITE_EXTERNAL_STORAGE}, 1);
         
         // 使用ToolBar
         toolbar = findViewById(R.id.toolbar);
@@ -218,8 +191,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // 启动service并绑定
         Intent intent = new Intent(this, MusicService.class);
         startService(intent);
-        bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
+        bindService(intent, serviceConnection, BIND_AUTO_CREATE);
+    }
 
+    private void initMusicList(){
         //从数据库获取我的音乐
         musicList = new ArrayList<>();
         List<MyMusic> list = LitePal.findAll(MyMusic.class);
@@ -231,10 +206,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // 音乐列表绑定适配器
         musicAdapter = new MusicAdapter(this, R.layout.music_item, musicList);
         musicListView.setAdapter(musicAdapter);
+    }
 
-        //读取累计听歌数量
-        SharedPreferences preferences = getSharedPreferences("data", MODE_PRIVATE);
-        Utils.count = preferences.getInt("count", 0);
+    // 读取配置
+    private void initsettings(){
+        spf = getSharedPreferences("settings", MODE_PRIVATE);
+        //累计听歌数量
+        Utils.count = spf.getInt("listen_count", 0);
+        musicCountView.setText("累计听歌"+String.valueOf(Utils.count) +"首");
+    }
+
+    // 保存配置
+    private void saveSettings(){
+        SharedPreferences.Editor editor = spf.edit();
+
+        //累计听歌数量
+        editor.putInt("listen_count", Utils.count);
+        // 播放模式
+        int mode = serviceBinder.getPlayMode();
+        editor.putInt("play_mode", mode);
+
+        editor.apply();
     }
 
     // 设置侧边栏
@@ -263,6 +255,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         break;
                     case R.id.exit:
                         // 退出
+                        unbindService(serviceConnection);
+                        Intent intent = new Intent(MainActivity.this, MusicService.class);
+                        stopService(intent);
                         finish();
                         break;
                 }
@@ -279,7 +274,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //设计对话框的显示标题
         builder.setTitle("播放列表");
         //获取播放列表
-        final List<Music> playingList = service.getPlayingList();
+        final List<Music> playingList = serviceBinder.getPlayingList();
 
         if(playingList.size() > 0) {
 
@@ -289,14 +284,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //监听列表项点击事件
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    service.addPlayList(playingList.get(which));
+                    serviceBinder.addPlayList(playingList.get(which));
                 }
             });
             //列表项中删除按钮的点击事件
             playingAdapter.setOnDeleteButtonListener(new PlayingMusicAdapter.onDeleteButtonListener() {
                 @Override
                 public void onClick(int i) {
-                    service.removeMusic(i);
+                    serviceBinder.removeMusic(i);
                     playingAdapter.notifyDataSetChanged();
                 }
             });
@@ -313,33 +308,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     // 与后台服务连接的匿名类
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
+    private ServiceConnection serviceConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             //绑定成功后，取得MusicSercice提供的接口
-            MainActivity.this.service = (MusicService.MusicServiceIBinder) service;
+            serviceBinder = (MusicService.MusicServiceBinder) service;
 
             //注册监听器
-            ((MusicService.MusicServiceIBinder) service).registerOnStateChangeListener(listenr);
+            serviceBinder.registerOnStateChangeListener(listenr);
 
-            Music item = ((MusicService.MusicServiceIBinder) service).getCurrentMusic();
+            Music item = serviceBinder.getCurrentMusic();
 
             if(item != null){
                 //当前有可播放音乐
                 playingTitleView.setText(item.title);
                 playingArtistView.setText(item.artist);
-                Glide.with(getApplicationContext())
-                        .load(item.imgUrl)
-                        .placeholder(R.drawable.defult_music_img)
-                        .error(R.drawable.defult_music_img)
-                        .into(playingImgView);
+                if (item.isOnlineMusic){
+                    Glide.with(getApplicationContext())
+                            .load(item.imgUrl)
+                            .placeholder(R.drawable.defult_music_img)
+                            .error(R.drawable.defult_music_img)
+                            .into(playingImgView);
+                }
+                else {
+                    ContentResolver resolver = getContentResolver();
+                    Bitmap img = Utils.getLocalMusicBmp(resolver, item.imgUrl);
+                    Glide.with(getApplicationContext())
+                            .load(img)
+                            .placeholder(R.drawable.defult_music_img)
+                            .error(R.drawable.defult_music_img)
+                            .into(playingImgView);
+                }
             }
+
+            int mode = spf.getInt("play_mode", Utils.TYPE_ORDER);
+            serviceBinder.setPlayMode(mode);
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
             //断开连接之后, 注销监听器
-            service.unregisterOnStateChangeListener(listenr);
+            serviceBinder.unregisterOnStateChangeListener(listenr);
         }
     };
 
@@ -355,11 +364,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             btnPlayOrPause.setImageResource(R.drawable.zanting);
             playingTitleView.setText(item.title);
             playingArtistView.setText(item.artist);
-            Glide.with(getApplicationContext())
-                    .load(item.imgUrl)
-                    .placeholder(R.drawable.defult_music_img)
-                    .error(R.drawable.defult_music_img)
-                    .into(playingImgView);
+            if (item.isOnlineMusic){
+                Glide.with(getApplicationContext())
+                        .load(item.imgUrl)
+                        .placeholder(R.drawable.defult_music_img)
+                        .error(R.drawable.defult_music_img)
+                        .into(playingImgView);
+            }
+            else {
+                ContentResolver resolver = getContentResolver();
+                Bitmap img = Utils.getLocalMusicBmp(resolver, item.imgUrl);
+                Glide.with(getApplicationContext())
+                        .load(img)
+                        .placeholder(R.drawable.defult_music_img)
+                        .error(R.drawable.defult_music_img)
+                        .into(playingImgView);
+            }
         }
 
         @Override
@@ -386,4 +406,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            addMymusic(item);
 //        }
 //    }
+
+    // 显示菜单
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    // 菜单点击事件
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.local_music:
+                Intent intent1 = new Intent(MainActivity.this, LocalMusicActivity.class);
+                startActivity(intent1);
+                break;
+            case R.id.online_music:
+                Intent intent2 = new Intent(MainActivity.this, OnlineMusicActivity.class);
+                startActivity(intent2);
+                break;
+            default:
+        }
+        return true;
+    }
 }

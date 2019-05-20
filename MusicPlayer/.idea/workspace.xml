@@ -42,39 +42,7 @@
     </system>
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="LocalMusicActivity.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/activity/LocalMusicActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3380">
-              <caret line="53" column="42" selection-start-line="53" selection-start-column="42" selection-end-line="53" selection-end-column="42" />
-              <folding>
-                <element signature="method#onPreExecute#0;class#MusicUpdateTask#0;class#LocalMusicActivity#0" />
-                <element signature="method#onOptionsItemSelected#0;class#LocalMusicActivity#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/activity/MainActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="297">
-              <caret line="51" column="38" selection-start-line="51" selection-start-column="38" selection-end-line="51" selection-end-column="38" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="OnlineMusicActivity.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/activity/OnlineMusicActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="50" column="37" selection-start-line="50" selection-start-column="37" selection-end-line="50" selection-end-column="37" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
   </component>
   <component name="GradleLocalSettings">
     <option name="myGradleHomes">
@@ -2267,7 +2235,6 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/OnlineMusicActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/MusicService.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/useLitepal/OnlineMusic.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/Utils.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/Music.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/useLitepal/LocalMusic.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/useLitepal/MyMusic.java" />
@@ -2281,11 +2248,13 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/MusicAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/music_item.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/layout_discview.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_player.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/service/MusicService.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/activity/PlayerActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/activity/MainActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/Utils.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/activity/LocalMusicActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/activity/OnlineMusicActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/activity/MainActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/activity/PlayerActivity.java" />
       </list>
     </option>
   </component>
@@ -2300,47 +2269,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="AndroidView">
-        <subPane>
-          <expand>
-            <path>
-              <item name="MusicPlayer" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-            </path>
-            <path>
-              <item name="MusicPlayer" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-            </path>
-            <path>
-              <item name="MusicPlayer" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="musicplayer" type="cbb59c9e:AndroidPsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="MusicPlayer" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="musicplayer" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="activity" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="MusicPlayer" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="res" type="d4f16f75:AndroidResFolderNode" />
-            </path>
-            <path>
-              <item name="MusicPlayer" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="res" type="d4f16f75:AndroidResFolderNode" />
-              <item name="layout" type="ddeffd01:AndroidResFolderTypeNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="Scope" />
       <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
@@ -2374,6 +2302,43 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="res" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+      <pane id="AndroidView">
+        <subPane>
+          <expand>
+            <path>
+              <item name="MusicPlayer" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+            </path>
+            <path>
+              <item name="MusicPlayer" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+            </path>
+            <path>
+              <item name="MusicPlayer" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="musicplayer" type="cbb59c9e:AndroidPsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="MusicPlayer" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="musicplayer" type="cbb59c9e:AndroidPsiDirectoryNode" />
+              <item name="activity" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="MusicPlayer" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="musicplayer" type="cbb59c9e:AndroidPsiDirectoryNode" />
+              <item name="service" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -2529,7 +2494,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="228" y="25" width="1575" height="953" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="Android Profiler" order="7" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.19018404" />
@@ -2539,10 +2503,10 @@
       <window_info anchor="right" id="Capture Analysis" order="3" />
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50033003" side_tool="true" weight="0.23067485" />
       <window_info anchor="right" id="Preview" order="3" weight="0.24818482" />
-      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49966997" weight="0.14969325" />
+      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Terminal" order="7" />
-      <window_info anchor="bottom" id="Logcat" order="7" weight="0.35337424" />
+      <window_info anchor="bottom" id="Logcat" order="7" weight="0.24417178" />
       <window_info id="Captures" order="2" weight="0.25" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
@@ -2552,8 +2516,8 @@
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Device File Explorer" order="3" side_tool="true" weight="0.32937294" />
       <window_info anchor="right" id="Theme Preview" order="3" />
-      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -2671,13 +2635,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="104">
           <caret line="4" column="22" selection-start-line="4" selection-start-column="22" selection-end-line="4" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/Utils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
-          <caret line="19" column="54" lean-forward="true" selection-start-line="19" selection-start-column="54" selection-end-line="19" selection-end-column="54" />
         </state>
       </provider>
     </entry>
@@ -2820,16 +2777,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_player.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="167">
-          <caret line="50" column="34" selection-start-line="50" selection-start-column="34" selection-end-line="50" selection-end-column="34" />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://E:/Android/SDK/sources/android-28/android/content/ContextWrapper.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="148">
@@ -2851,14 +2798,23 @@
         <state />
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_player.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="139" column="37" selection-start-line="139" selection-start-column="37" selection-end-line="139" selection-end-column="37" />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/service/MusicService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2444">
-          <caret line="334" column="57" lean-forward="true" selection-start-line="334" selection-start-column="57" selection-end-line="334" selection-end-column="57" />
+        <state relative-caret-position="-390">
+          <caret line="29" column="38" selection-start-line="29" selection-start-column="38" selection-end-line="29" selection-end-column="38" />
           <folding>
-            <element signature="method#onDestroy#0;class#MusicService#0" />
             <element signature="class#OnStateChangeListenr#0;class#MusicService#0" />
-            <element signature="class#MusicServiceIBinder#0;class#MusicService#0" />
+            <element signature="method#playOrPause#0;class#MusicServiceIBinder#0;class#MusicService#0" />
             <element signature="method#unregisterOnStateChangeListener#0;class#MusicServiceIBinder#0;class#MusicService#0" />
             <element signature="method#addPlayListInner#0;class#MusicService#0" />
             <element signature="method#addPlayListInner#1;class#MusicService#0" />
@@ -2868,52 +2824,61 @@
             <element signature="method#playPreInner#0;class#MusicService#0" />
             <element signature="method#playNextInner#0;class#MusicService#0" />
             <element signature="method#seekToInner#0;class#MusicService#0" />
-            <element signature="method#initPlayList#0;class#MusicService#0" />
             <element signature="method#prepareToPlay#0;class#MusicService#0" />
             <element signature="method#playMusicItem#0;class#MusicService#0" />
+            <element signature="method#initPlayList#0;class#MusicService#0" />
             <element signature="method#onBind#0;class#MusicService#0" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/Utils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="312">
+          <caret line="26" column="42" lean-forward="true" selection-start-line="26" selection-start-column="42" selection-end-line="26" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/activity/PlayerActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="32" column="35" selection-start-line="32" selection-start-column="35" selection-end-line="32" selection-end-column="35" />
+        <state relative-caret-position="371">
+          <caret line="314" column="44" selection-start-line="314" selection-start-column="44" selection-end-line="314" selection-end-column="44" />
           <folding>
             <element signature="method#onDestroy#0;class#PlayerActivity#0" />
-            <element signature="method#finish#0;class#PlayerActivity#0" />
-            <element signature="method#initActivity#0;class#PlayerActivity#0" />
             <element signature="method#showPlayList#0;class#PlayerActivity#0" />
-            <element signature="method#onProgressChanged#0;class#PlayerActivity#0" />
-            <element signature="method#onStopTrackingTouch#0;class#PlayerActivity#0" />
-            <element signature="method#onStartTrackingTouch#0;class#PlayerActivity#0" />
             <element signature="method#onOptionsItemSelected#0;class#PlayerActivity#0" />
+            <element signature="method#finish#0;class#PlayerActivity#0" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/activity/OnlineMusicActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="50" column="37" selection-start-line="50" selection-start-column="37" selection-end-line="50" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/activity/MainActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="51" column="38" selection-start-line="51" selection-start-column="38" selection-end-line="51" selection-end-column="38" />
+        <state relative-caret-position="437">
+          <caret line="327" column="51" selection-start-line="327" selection-start-column="51" selection-end-line="327" selection-end-column="51" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/activity/LocalMusicActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3380">
-          <caret line="53" column="42" selection-start-line="53" selection-start-column="42" selection-end-line="53" selection-end-column="42" />
+        <state relative-caret-position="21">
+          <caret line="314" column="36" selection-start-line="314" selection-start-column="36" selection-end-line="314" selection-end-column="36" />
           <folding>
             <element signature="method#onPreExecute#0;class#MusicUpdateTask#0;class#LocalMusicActivity#0" />
+            <element signature="method#doInBackground#0;class#MusicUpdateTask#0;class#LocalMusicActivity#0" />
             <element signature="method#onOptionsItemSelected#0;class#LocalMusicActivity#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/musicplayer/activity/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="281">
+          <caret line="370" column="38" selection-start-line="370" selection-start-column="38" selection-end-line="370" selection-end-column="38" />
+          <folding>
+            <element signature="method#onClick#0;class#MainActivity#0" />
+            <element signature="method#initMusicList#0;class#MainActivity#0" />
+            <element signature="method#setNavigationView#0;class#MainActivity#0" />
           </folding>
         </state>
       </provider>

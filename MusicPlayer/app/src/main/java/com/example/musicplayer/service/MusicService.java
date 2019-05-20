@@ -3,6 +3,7 @@ package com.example.musicplayer.service;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -26,23 +27,23 @@ public class MusicService extends Service {
     private MediaPlayer player;
     private List<Music> playingMusicList;
     private List<OnStateChangeListenr> listenrList;
-    private IBinder binder;
+    private MusicServiceBinder binder;
     private AudioManager audioManager;
     private Music currentMusic; // 当前就绪的音乐
     private  boolean autoPlayAfterFocus;    // 获取焦点之后是否自动播放
     private boolean isNeedReload;     // 播放时是否需要重新加载
-    private int playMode = Utils.TYPE_ORDER;  // 默认顺序播放模式
+    private int playMode;  // 播放模式
+    private SharedPreferences spf;
 
     @Override
     public void onCreate() {
         super.onCreate();
-
         initPlayList();     //初始化播放列表
         listenrList = new ArrayList<>();    //初始化监听器列表
         player = new MediaPlayer();   //初始化播放器
-        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE); //获得音频管理服务
         player.setOnCompletionListener(onCompletionListener);   //设置播放完成的监听器
-        binder = new MusicServiceIBinder();
+        binder = new MusicServiceBinder();
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE); //获得音频管理服务
     }
 
     @Override
@@ -53,12 +54,10 @@ public class MusicService extends Service {
         }
         player.release();
 
-        audioManager.abandonAudioFocus(mAudioFocusListener); //注销音频管理服务
-
         playingMusicList.clear();
         listenrList.clear();
-        //停止发送更新消息
         handler.removeMessages(66);
+        audioManager.abandonAudioFocus(audioFocusListener); //注销音频管理服务
     }
 
     //对外监听器接口
@@ -69,7 +68,7 @@ public class MusicService extends Service {
     }
 
     //定义binder与活动通信
-    public class MusicServiceIBinder extends Binder {
+    public class MusicServiceBinder extends Binder {
 
         // 添加一首歌曲
         public void addPlayList(Music item) {
@@ -86,14 +85,13 @@ public class MusicService extends Service {
             removeMusicInner(i);
         }
 
-        // 播放
-        public void play() {
-            playInner();
-        }
-
-        // 暂停
-        public void pause() {
-            pauseInner();
+        public void playOrPause(){
+            if (player.isPlaying()){
+                pauseInner();
+            }
+            else {
+                playInner();
+            }
         }
 
         // 下一首
@@ -106,14 +104,14 @@ public class MusicService extends Service {
             playPreInner();
         }
 
-        // 设置播放模式
-        public void setPlayMode(int mode){
-            setModeInner(mode);
-        }
-
         // 获取当前播放模式
         public int getPlayMode(){
             return getPlayModeInner();
+        }
+
+        // 设置播放模式
+        public void setPlayMode(int mode){
+            setPlayModeInner(mode);
         }
 
         // 设置播放器进度
@@ -178,12 +176,14 @@ public class MusicService extends Service {
     private void playInner() {
 
         //获取音频焦点
-        audioManager.requestAudioFocus(mAudioFocusListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        audioManager.requestAudioFocus(audioFocusListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
 
         //如果之前没有选定要播放的音乐，就选列表中的第一首音乐开始播放
         if (currentMusic == null && playingMusicList.size() > 0) {
             currentMusic = playingMusicList.get(0);
+            isNeedReload = true;
         }
+
         playMusicItem(currentMusic, isNeedReload);
 
 
@@ -247,26 +247,12 @@ public class MusicService extends Service {
         return playingMusicList;
     }
 
-    private void setModeInner(int mode){
-        playMode = mode;
-    }
-
     private int getPlayModeInner(){
         return playMode;
     }
 
-
-    // 初始化播放列表
-    private void initPlayList() {
-        playingMusicList = new ArrayList<>();
-        List<PlayingMusic> list = LitePal.findAll(PlayingMusic.class);
-        for (PlayingMusic i : list) {
-            Music m = new Music(i.songUrl, i.title, i.artist, i.imgUrl, i.isOnlineMusic);
-            playingMusicList.add(m);
-        }
-        if (playingMusicList.size() > 0) {
-            currentMusic = playingMusicList.get(0);
-        }
+    private void setPlayModeInner(int mode){
+        playMode = mode;
     }
 
     // 将要播放的音乐载入MediaPlayer，但是并不播放
@@ -302,6 +288,20 @@ public class MusicService extends Service {
         //移除现有的更新消息，重新启动更新
         handler.removeMessages(66);
         handler.sendEmptyMessage(66);
+    }
+
+    // 初始化播放列表
+    private void initPlayList() {
+        playingMusicList = new ArrayList<>();
+        List<PlayingMusic> list = LitePal.findAll(PlayingMusic.class);
+        for (PlayingMusic i : list) {
+            Music m = new Music(i.songUrl, i.title, i.artist, i.imgUrl, i.isOnlineMusic);
+            playingMusicList.add(m);
+        }
+        if (playingMusicList.size() > 0) {
+            currentMusic = playingMusicList.get(0);
+            isNeedReload = true;
+        }
     }
 
     //当前歌曲播放完成的监听器
@@ -350,7 +350,7 @@ public class MusicService extends Service {
     }
 
     //焦点控制
-    private AudioManager.OnAudioFocusChangeListener mAudioFocusListener = new AudioManager.OnAudioFocusChangeListener(){
+    private AudioManager.OnAudioFocusChangeListener audioFocusListener = new AudioManager.OnAudioFocusChangeListener(){
 
         public void onAudioFocusChange(int focusChange) {
             switch(focusChange){

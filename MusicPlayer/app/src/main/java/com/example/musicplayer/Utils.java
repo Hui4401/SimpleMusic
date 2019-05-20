@@ -20,11 +20,12 @@ public class Utils {
     public static final int TYPE_RANDOM = 4414; //随机播放
 
     // 获取本地音乐封面图片
-    public static Bitmap getBmp(ContentResolver res, Uri albumUri) {
+    public static Bitmap getLocalMusicBmp(ContentResolver res, String musicPic) {
         InputStream in;
         Bitmap bmp = null;
         try {
-            in = res.openInputStream(albumUri);
+            Uri uri = Uri.parse(musicPic);
+            in = res.openInputStream(uri);
             BitmapFactory.Options sBitmapOptions = new BitmapFactory.Options();
             bmp = BitmapFactory.decodeStream(in, null, sBitmapOptions);
             in.close();

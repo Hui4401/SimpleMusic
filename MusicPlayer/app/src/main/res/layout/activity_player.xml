@@ -48,45 +48,43 @@
 
     <!--include包含唱片的布局，并将其放在播放栏上面-->
     <include
-        android:id="@+id/discview"
         layout="@layout/layout_discview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/rlMusicTime"
+        android:layout_above="@id/music_time"
         android:layout_below="@id/toolbar">
-
     </include>
 
     <!--使用相对布局设置唱片在播放页面的中的位置-->
     <RelativeLayout
-        android:id="@+id/rlMusicTime"
+        android:id="@+id/music_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/llPlayOption"
+        android:layout_above="@+id/play_control"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
         android:layout_alignParentEnd="true" >
 
         <!--设置播放时间的文本布局(起始)-->
         <TextView
-            android:id="@+id/tvCurrentTime"
+            android:id="@+id/current_time"
             style="@style/netease_music_time_text_style"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true" />
 
         <!--设置播放进度条的布局-->
         <SeekBar
-            android:id="@+id/musicSeekBar"
+            android:id="@+id/seekbar"
             style="@style/netease_music_time_seek_bar_style"
             android:layout_centerInParent="true"
-            android:layout_toEndOf="@id/tvCurrentTime"
-            android:layout_toStartOf="@+id/tvTotalTime"
+            android:layout_toEndOf="@id/current_time"
+            android:layout_toStartOf="@+id/total_time"
             android:paddingEnd="15dp"
             android:paddingStart="15dp" />
 
         <!--设置播放时间的文本布局(结束)-->
         <TextView
-            android:id="@+id/tvTotalTime"
+            android:id="@+id/total_time"
             style="@style/netease_music_time_text_style"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true" />
@@ -96,7 +94,7 @@
 
     <!--设置最下方的播放控制按钮的布局-->
     <LinearLayout
-        android:id="@+id/llPlayOption"
+        android:id="@+id/play_control"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -109,7 +107,7 @@
 
         <!--设置播放顺序控制按钮的布局-->
         <ImageView
-            android:id="@+id/ivPlayControl"
+            android:id="@+id/play_mode"
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:layout_marginEnd="25dp"
@@ -117,14 +115,14 @@
 
         <!--设置上一曲按钮的布局-->
         <ImageView
-            android:id="@+id/ivLast"
+            android:id="@+id/play_pre"
             android:layout_height="60dp"
             android:layout_width="60dp"
             android:src="@drawable/ic_pre" />
 
         <!--设置中间暂停和播放的按钮的布局-->
         <ImageView
-            android:id="@+id/ivPlayOrPause"
+            android:id="@+id/play_or_pause"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_marginEnd="10dp"
@@ -133,13 +131,13 @@
 
         <!--设置下一曲按钮的布局-->
         <ImageView
-            android:id="@+id/ivNext"
+            android:id="@+id/play_next"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:src="@drawable/ic_next" />
 
         <ImageView
-            android:id="@+id/ivMenu"
+            android:id="@+id/playing_list"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_marginStart="25dp"

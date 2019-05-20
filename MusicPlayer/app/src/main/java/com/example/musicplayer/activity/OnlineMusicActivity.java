@@ -2,9 +2,11 @@ package com.example.musicplayer.activity;
 
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -26,6 +28,7 @@ import com.example.musicplayer.Music;
 import com.example.musicplayer.MusicAdapter;
 import com.example.musicplayer.PlayingMusicAdapter;
 import com.example.musicplayer.R;
+import com.example.musicplayer.Utils;
 import com.example.musicplayer.service.MusicService;
 
 import org.json.JSONArray;
@@ -52,7 +55,7 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
     private ImageView btnPlayOrPause;
 
     private List<Music> onlinemusic_list;
-    private MusicService.MusicServiceIBinder service;
+    private MusicService.MusicServiceBinder serviceBinder;
     private MusicAdapter adapter;
 
     private OkHttpClient client;
@@ -88,7 +91,7 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Music music = onlinemusic_list.get(position);
-                service.addPlayList(music);
+                serviceBinder.addPlayList(music);
             }
         });
 
@@ -109,7 +112,7 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
                                 MainActivity.addMymusic(music);
                                 break;
                             case 1:
-                                service.addPlayList(music);
+                                serviceBinder.addPlayList(music);
                                 break;
                             case 2:
                                 //从列表中删除
@@ -131,7 +134,7 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.play_all:
-                service.addPlayList(onlinemusic_list);
+                serviceBinder.addPlayList(onlinemusic_list);
                 break;
             case R.id.player:
                 Intent intent = new Intent(OnlineMusicActivity.this, PlayerActivity.class);
@@ -140,12 +143,7 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
                 overridePendingTransition(R.anim.bottom_in, R.anim.bottom_silent);
                 break;
             case R.id.play_or_pause:
-                if (service.isPlaying()){
-                    service.pause();
-                }
-                else {
-                    service.play();
-                }
+                serviceBinder.playOrPause();
                 break;
             case R.id.playing_list:
                 showPlayList();
@@ -213,7 +211,7 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
         builder.setTitle("播放列表");
 
         //获取播放列表
-        final List<Music> playingList = service.getPlayingList();
+        final List<Music> playingList = serviceBinder.getPlayingList();
 
         if(playingList.size() > 0) {
             //播放列表有曲目，显示所有音乐
@@ -222,7 +220,7 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
                 //监听列表项点击事件
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    service.addPlayList(playingList.get(which));
+                    serviceBinder.addPlayList(playingList.get(which));
                 }
             });
 
@@ -230,7 +228,7 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
             playingAdapter.setOnDeleteButtonListener(new PlayingMusicAdapter.onDeleteButtonListener() {
                 @Override
                 public void onClick(int i) {
-                    service.removeMusic(i);
+                    serviceBinder.removeMusic(i);
                     playingAdapter.notifyDataSetChanged();
                 }
             });
@@ -254,40 +252,62 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
         public void onServiceConnected(ComponentName name, IBinder service) {
 
             //绑定成功后，取得MusicSercice提供的接口
-            OnlineMusicActivity.this.service = (MusicService.MusicServiceIBinder) service;
+            serviceBinder = (MusicService.MusicServiceBinder) service;
 
             //注册监听器
-            ((MusicService.MusicServiceIBinder) service).registerOnStateChangeListener(listenr);
+            serviceBinder.registerOnStateChangeListener(listenr);
 
-            Music item = ((MusicService.MusicServiceIBinder) service).getCurrentMusic();
+            Music item = serviceBinder.getCurrentMusic();
 
-            if (((MusicService.MusicServiceIBinder) service).isPlaying()){
+            if (serviceBinder.isPlaying()){
                 //如果正在播放音乐, 更新控制栏信息
                 btnPlayOrPause.setImageResource(R.drawable.zanting);
                 playingTitleView.setText(item.title);
                 playingArtistView.setText(item.artist);
-                Glide.with(getApplicationContext())
-                        .load(item.imgUrl)
-                        .placeholder(R.drawable.defult_music_img)
-                        .error(R.drawable.defult_music_img)
-                        .into(playingImgView);
+                if (item.isOnlineMusic){
+                    Glide.with(getApplicationContext())
+                            .load(item.imgUrl)
+                            .placeholder(R.drawable.defult_music_img)
+                            .error(R.drawable.defult_music_img)
+                            .into(playingImgView);
+                }
+                else {
+                    ContentResolver resolver = getContentResolver();
+                    Bitmap img = Utils.getLocalMusicBmp(resolver, item.imgUrl);
+                    Glide.with(getApplicationContext())
+                            .load(img)
+                            .placeholder(R.drawable.defult_music_img)
+                            .error(R.drawable.defult_music_img)
+                            .into(playingImgView);
+                }
             }
             else if (item != null){
                 //当前有可播放音乐但没有播放
                 btnPlayOrPause.setImageResource(R.drawable.bofang);
                 playingTitleView.setText(item.title);
                 playingArtistView.setText(item.artist);
-                Glide.with(getApplicationContext())
-                        .load(item.imgUrl)
-                        .placeholder(R.drawable.defult_music_img)
-                        .error(R.drawable.defult_music_img)
-                        .into(playingImgView);
+                if (item.isOnlineMusic){
+                    Glide.with(getApplicationContext())
+                            .load(item.imgUrl)
+                            .placeholder(R.drawable.defult_music_img)
+                            .error(R.drawable.defult_music_img)
+                            .into(playingImgView);
+                }
+                else {
+                    ContentResolver resolver = getContentResolver();
+                    Bitmap img = Utils.getLocalMusicBmp(resolver, item.imgUrl);
+                    Glide.with(getApplicationContext())
+                            .load(img)
+                            .placeholder(R.drawable.defult_music_img)
+                            .error(R.drawable.defult_music_img)
+                            .into(playingImgView);
+                }
             }
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
             //断开连接时注销监听器
-            service.unregisterOnStateChangeListener(listenr);
+            serviceBinder.unregisterOnStateChangeListener(listenr);
         }
     };
 
@@ -304,11 +324,22 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
             playingTitleView.setText(item.title);
             playingArtistView.setText(item.artist);
             btnPlayOrPause.setEnabled(true);
-            Glide.with(getApplicationContext())
-                    .load(item.imgUrl)
-                    .placeholder(R.drawable.defult_music_img)
-                    .error(R.drawable.defult_music_img)
-                    .into(playingImgView);
+            if (item.isOnlineMusic){
+                Glide.with(getApplicationContext())
+                        .load(item.imgUrl)
+                        .placeholder(R.drawable.defult_music_img)
+                        .error(R.drawable.defult_music_img)
+                        .into(playingImgView);
+            }
+            else {
+                ContentResolver resolver = getContentResolver();
+                Bitmap img = Utils.getLocalMusicBmp(resolver, item.imgUrl);
+                Glide.with(getApplicationContext())
+                        .load(img)
+                        .placeholder(R.drawable.defult_music_img)
+                        .error(R.drawable.defult_music_img)
+                        .into(playingImgView);
+            }
         }
 
         @Override
