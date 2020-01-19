@@ -129,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //清空列表
         musicList.clear();
         Glide.with(getApplicationContext()).pauseAllRequests();
+        unbindService(serviceConnection);
         saveSettings();
     }
 
