@@ -63,7 +63,7 @@
 | /res/menu/nav_menu.xml | 侧拉菜单项布局 |
 
 ## 5. 效果图
-<img src="screenshots/播放器.png" width = "22%" div align=left/>
-<img src="screenshots/我的音乐.png" width = "22%" div align=left/>
-<img src="screenshots/本地音乐.png" width = "22%" div align=left/>
-<img src="screenshots/在线音乐.png" width = "22%" div align=left/>
+<img src="screenshots/播放器.png" width = "22%"/>
+<img src="screenshots/我的音乐.png" width = "22%"/>
+<img src="screenshots/本地音乐.png" width = "22%"/>
+<img src="screenshots/在线音乐.png" width = "22%"/>
