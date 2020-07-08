@@ -63,7 +63,7 @@
 | /res/menu/nav_menu.xml | 侧拉菜单项布局 |
 
 ## 5. 效果图
-[![Acw7Ks.md.png](https://s2.ax1x.com/2019/04/03/Acw7Ks.md.png)](https://imgchr.com/i/Acw7Ks)
-[![Acwovj.md.png](https://s2.ax1x.com/2019/04/03/Acwovj.md.png)](https://imgchr.com/i/Acwovj)
-[![AcwI2Q.md.png](https://s2.ax1x.com/2019/04/03/AcwI2Q.md.png)](https://imgchr.com/i/AcwI2Q)
-[![Acw58g.md.png](https://s2.ax1x.com/2019/04/03/Acw58g.md.png)](https://imgchr.com/i/Acw58g)
+<img src="https://github.com/zzh2910/SimpleMusic/blob/master/screenshot/%E5%9C%A8%E7%BA%BF%E9%9F%B3%E4%B9%90.png" width = "50%" div align=center/>
+<img src="https://github.com/zzh2910/SimpleMusic/blob/master/screenshot/%E5%9C%A8%E7%BA%BF%E9%9F%B3%E4%B9%90.png" width = "50%" div align=center/>
+<img src="https://github.com/zzh2910/SimpleMusic/blob/master/screenshot/%E5%9C%A8%E7%BA%BF%E9%9F%B3%E4%B9%90.png" width = "50%" div align=center/>
+<img src="https://github.com/zzh2910/SimpleMusic/blob/master/screenshot/%E5%9C%A8%E7%BA%BF%E9%9F%B3%E4%B9%90.png" width = "50%" div align=center/>
