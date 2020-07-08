@@ -63,7 +63,7 @@
 | /res/menu/nav_menu.xml | 侧拉菜单项布局 |
 
 ## 5. 效果图
-[![Acw7Ks.md.png](https://s2.ax1x.com/2019/04/03/Acw7Ks.md.png)](https://imgchr.com/i/Acw7Ks)
-[![Acwovj.md.png](https://s2.ax1x.com/2019/04/03/Acwovj.md.png)](https://imgchr.com/i/Acwovj)
-[![AcwI2Q.md.png](https://s2.ax1x.com/2019/04/03/AcwI2Q.md.png)](https://imgchr.com/i/AcwI2Q)
-[![Acw58g.md.png](https://s2.ax1x.com/2019/04/03/Acw58g.md.png)](https://imgchr.com/i/Acw58g)
+<img src="screenshot/播放器.png" width = "50%" div align=center/>
+<img src="screenshot/我的音乐.png" width = "50%" div align=center/>
+<img src="screenshot/本地音乐.png" width = "50%" div align=center/>
+<img src="screenshot/在线音乐.png" width = "50%" div align=center/>
