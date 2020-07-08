@@ -63,8 +63,7 @@
 | /res/menu/nav_menu.xml | 侧拉菜单项布局 |
 
 ## 5. 效果图
-![image](screenshot/播放器.png)
 <img src="screenshot/播放器.png" width = "50%" div align=center/>
-<img src="https://github.com/zzh2910/SimpleMusic/blob/master/screenshot/%E5%9C%A8%E7%BA%BF%E9%9F%B3%E4%B9%90.png" width = "50%" div align=center/>
-<img src="https://github.com/zzh2910/SimpleMusic/blob/master/screenshot/%E5%9C%A8%E7%BA%BF%E9%9F%B3%E4%B9%90.png" width = "50%" div align=center/>
-<img src="https://github.com/zzh2910/SimpleMusic/blob/master/screenshot/%E5%9C%A8%E7%BA%BF%E9%9F%B3%E4%B9%90.png" width = "50%" div align=center/>
+<img src="screenshot/我的音乐.png" width = "50%" div align=center/>
+<img src="screenshot/本地音乐.png" width = "50%" div align=center/>
+<img src="screenshot/在线音乐.png" width = "50%" div align=center/>
