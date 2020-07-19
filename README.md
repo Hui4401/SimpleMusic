@@ -33,28 +33,19 @@
 ### 各java文件的作用
 | 文件名 | 功能 |
 |--|--|
-| /java/useLitepal/*.java | litepal采用对象映射操作数据库, 每个文件对应一张表 |
-| /java/widget/RotateAnimator.java | 唱盘动画制作 |
+| /java/db/*.java | litepal采用对象映射操作数据库, 每个类对应一张表 |
+| /java/view/RotateAnimator.java | 唱盘动画制作 |
 | /java/Music.java | 音乐类 |
-| /java/MusicAdapter.java | 音乐列表显示音乐的适配器 |
-| /java/PlayingMusicAdapter.java | 播放列表显示音乐的适配器 |
-| /java/SplashActivity.java | 欢迎界面 |
-| /java/MainActivity.java | 主界面 |
-| /java/LocalMusicActivity.java | 本地音乐界面 |
-| /java/OlineMusicActivity.java | 在线音乐界面 |
-| /java/PlayerActivity.java | 播放器界面 |
-| /java/MusicService.java | 音乐服务 |
-| /java/Utils.java | 工具类, 封装了一些常用操作 |
+| /java/adapter/*.java | 适配器类 |
+| /java/activity/*.java | 所有活动 |
+| /java/service/MusicService.java | 音乐服务 |
+| /java/util/Utils.java | 工具类, 封装了一些常用操作 |
 
 ### 各xml文件的作用
 | 文件名 | 功能 |
 |--|--|
 | /res/anim/*.xml | Activity切换动画 |
-| /res/layout/activity_splash.xml | 欢迎界面布局 |
-| /res/layout/ activity_main.xml | 主界面布局 |
-| /res/layout/ activity_localmusic.xml | 本地音乐界面布局 |
-| /res/layout/ activity_onlinemusic.xml | 在线音乐界面布局 |
-| /res/layout/ activity_player.xml | 播放器界面布局 |
+| /res/layout/activity_*.xml | 界面布局 |
 | /res/layout/music_item.xml | 音乐列表项布局 |
 | /res/layout/playinglist_item.xml | 播放列表项布局 |
 | /res/layout/layout_discview.xml | 播放器唱盘布局 |
