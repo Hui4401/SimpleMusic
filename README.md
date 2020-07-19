@@ -35,7 +35,7 @@
 |--|--|
 | /java/db/*.java | litepal采用对象映射操作数据库, 每个类对应一张表 |
 | /java/view/RotateAnimator.java | 唱盘动画制作 |
-| /java/Music.java | 音乐类 |
+| /java/bean/Music.java | 音乐类 |
 | /java/adapter/*.java | 适配器类 |
 | /java/activity/*.java | 所有活动 |
 | /java/service/MusicService.java | 音乐服务 |
