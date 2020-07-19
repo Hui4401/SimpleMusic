@@ -1,4 +1,4 @@
-package com.example.musicplayer.activity;
+package com.example.simplemusic.activity;
 
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -19,30 +19,30 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.musicplayer.Music;
-import com.example.musicplayer.PlayingMusicAdapter;
-import com.example.musicplayer.R;
-import com.example.musicplayer.Utils;
-import com.example.musicplayer.service.MusicService;
+import com.example.simplemusic.bean.Music;
+import com.example.simplemusic.adapter.PlayingMusicAdapter;
+import com.example.simplemusic.R;
+import com.example.simplemusic.util.Utils;
+import com.example.simplemusic.service.MusicService;
 
 import java.util.List;
 import java.util.Objects;
 
 public class PlayerActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private TextView musicTitleView;
-    private TextView musicArtistView;
-    private ImageView musicImgView;
-    private ImageView btnPlayMode;
-    private ImageView btnPlayPre;
-    private ImageView btnPlayOrPause;
-    private ImageView btnPlayNext;
-    private ImageView btnPlayingList;
-    private TextView nowTimeView;
-    private TextView totalTimeView;
-    private SeekBar seekBar;
-    private com.example.musicplayer.widget.RotateAnimator rotateAnimator;
-    private MusicService.MusicServiceBinder serviceBinder;
+    private TextView                                    musicTitleView;
+    private TextView                                    musicArtistView;
+    private ImageView                                   musicImgView;
+    private ImageView                                   btnPlayMode;
+    private ImageView                                   btnPlayPre;
+    private ImageView                                   btnPlayOrPause;
+    private ImageView                                   btnPlayNext;
+    private ImageView                                   btnPlayingList;
+    private TextView                                    nowTimeView;
+    private TextView                                    totalTimeView;
+    private SeekBar                                     seekBar;
+    private com.example.simplemusic.view.RotateAnimator rotateAnimator;
+    private MusicService.MusicServiceBinder             serviceBinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,7 +149,7 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         });
 
         //初始化动画
-        rotateAnimator = new com.example.musicplayer.widget.RotateAnimator(this, musicImgView, needleView);
+        rotateAnimator = new com.example.simplemusic.view.RotateAnimator(this, musicImgView, needleView);
         rotateAnimator.set_Needle();
 
         // 绑定service

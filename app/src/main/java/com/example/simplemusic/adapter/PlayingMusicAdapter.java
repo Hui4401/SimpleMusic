@@ -1,4 +1,4 @@
-package com.example.musicplayer;
+package com.example.simplemusic.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,14 +8,17 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.simplemusic.bean.Music;
+import com.example.simplemusic.R;
+
 import java.util.List;
 
 public class PlayingMusicAdapter extends BaseAdapter {
 
-    private List<Music> mData;
-    private LayoutInflater mInflater;
-    private int mResource;
-    private Context mContext;
+    private List<Music>            mData;
+    private LayoutInflater         mInflater;
+    private int                    mResource;
+    private Context                mContext;
     private onDeleteButtonListener monDeleteButtonListener;
 
     public PlayingMusicAdapter(Context context, int resId, List<Music> data)

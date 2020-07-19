@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.musicplayer">
+    package="com.example.simplemusic">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -16,17 +16,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.MainActivity"/>
-        <activity android:name=".activity.LocalMusicActivity" />
-        <activity android:name=".activity.OnlineMusicActivity" />
-        <activity android:name=".activity.PlayerActivity" />
+        <activity android:name="com.example.simplemusic.activity.MainActivity"/>
+        <activity android:name="com.example.simplemusic.activity.LocalMusicActivity" />
+        <activity android:name="com.example.simplemusic.activity.OnlineMusicActivity" />
+        <activity android:name="com.example.simplemusic.activity.PlayerActivity" />
 
         <service
-            android:name=".service.MusicService"
+            android:name="com.example.simplemusic.service.MusicService"
             android:enabled="true"
             android:exported="true"></service>
 
-        <activity android:name=".activity.SplashActivity">
+        <activity android:name="com.example.simplemusic.activity.StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -1,4 +1,4 @@
-package com.example.musicplayer.useLitepal;
+package com.example.simplemusic.db;
 
 import org.litepal.crud.LitePalSupport;
 

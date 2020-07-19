@@ -1,4 +1,4 @@
-package com.example.musicplayer.activity;
+package com.example.simplemusic.activity;
 
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -27,13 +27,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.musicplayer.Music;
-import com.example.musicplayer.MusicAdapter;
-import com.example.musicplayer.PlayingMusicAdapter;
-import com.example.musicplayer.R;
-import com.example.musicplayer.Utils;
-import com.example.musicplayer.service.MusicService;
-import com.example.musicplayer.useLitepal.MyMusic;
+import com.example.simplemusic.bean.Music;
+import com.example.simplemusic.adapter.MusicAdapter;
+import com.example.simplemusic.adapter.PlayingMusicAdapter;
+import com.example.simplemusic.R;
+import com.example.simplemusic.util.Utils;
+import com.example.simplemusic.service.MusicService;
+import com.example.simplemusic.db.MyMusic;
 import com.jaeger.library.StatusBarUtil;
 
 import org.litepal.LitePal;

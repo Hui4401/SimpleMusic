@@ -1,4 +1,4 @@
-package com.example.musicplayer;
+package com.example.simplemusic.util;
 
 import android.content.ContentResolver;
 import android.graphics.Bitmap;

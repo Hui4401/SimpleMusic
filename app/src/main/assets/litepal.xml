@@ -5,8 +5,8 @@
     <version value="10"></version>
 
     <list>
-        <mapping class="com.example.musicplayer.useLitepal.MyMusic" />
-        <mapping class="com.example.musicplayer.useLitepal.LocalMusic" />
-        <mapping class="com.example.musicplayer.useLitepal.PlayingMusic" />
+        <mapping class="com.example.simplemusic.db.MyMusic" />
+        <mapping class="com.example.simplemusic.db.LocalMusic" />
+        <mapping class="com.example.simplemusic.db.PlayingMusic" />
     </list>
 </litepal>

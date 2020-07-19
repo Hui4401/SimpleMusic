@@ -1,4 +1,4 @@
-package com.example.musicplayer.widget;
+package com.example.simplemusic.view;
 
 import android.content.Context;
 import android.graphics.Canvas;

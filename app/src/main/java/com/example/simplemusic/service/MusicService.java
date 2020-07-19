@@ -1,4 +1,4 @@
-package com.example.musicplayer.service;
+package com.example.simplemusic.service;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
@@ -12,9 +12,9 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 
-import com.example.musicplayer.Music;
-import com.example.musicplayer.Utils;
-import com.example.musicplayer.useLitepal.PlayingMusic;
+import com.example.simplemusic.bean.Music;
+import com.example.simplemusic.util.Utils;
+import com.example.simplemusic.db.PlayingMusic;
 
 import org.litepal.LitePal;
 

@@ -1,4 +1,4 @@
-package com.example.musicplayer;
+package com.example.simplemusic.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,13 +8,16 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.simplemusic.bean.Music;
+import com.example.simplemusic.R;
+
 import java.util.List;
 
 public class MusicAdapter extends BaseAdapter {
 
-    private List<Music> mData;
-    private LayoutInflater mInflater;
-    private int mResource;
+    private List<Music>          mData;
+    private LayoutInflater       mInflater;
+    private int                  mResource;
     private onMoreButtonListener monMoreButtonListener;
 
     public MusicAdapter(Context context, int resId, List<Music> data)

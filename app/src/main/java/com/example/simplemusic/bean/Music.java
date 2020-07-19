@@ -1,4 +1,4 @@
-package com.example.musicplayer;
+package com.example.simplemusic.bean;
 
 import java.util.Objects;
 
