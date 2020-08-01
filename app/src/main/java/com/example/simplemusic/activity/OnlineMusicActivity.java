@@ -354,7 +354,7 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
     private void getOlineMusic() {
 
         Request request = new Request.Builder()
-                .url("https://v1.itooi.cn/netease/songList?id=3778678&format=1")
+                .url("https://api.itooi.cn/netease/songList?id=3778678&format=1")
                 .build();
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -378,10 +378,10 @@ public class OnlineMusicActivity extends AppCompatActivity implements View.OnCli
                         JSONObject song = songs.getJSONObject(i);
 
                         String id = song.getString("id");
-                        String songurl = "https://v1.itooi.cn/netease/url?id=" + id + "&quality=128";
+                        String songurl = "https://api.itooi.cn/netease/url?id=" + id + "&quality=128";
                         String name = song.getString("name");
                         String singer = song.getString("singer");
-                        String pic = "https://v1.itooi.cn/netease/pic?id=" + id;
+                        String pic = "https://api.itooi.cn/netease/pic?id=" + id;
 
                         //实例化一首音乐并发送到主线程更新
                         Music music = new Music(songurl, name, singer, pic, true);
