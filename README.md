@@ -1,5 +1,7 @@
 # SimpleMusic
 
+Android期末项目，仅用作学习使用，APP只获取了网易云热歌榜作为在线音乐，在线音乐API来自[鼻子亲了脸](https://www.bzqll.com/")
+
 ## 1. 开发环境
 - AndroidStudio 3.2
 - AndroidSDK 5.0
