@@ -2,6 +2,11 @@
 
 Android期末项目，仅用作学习使用，在线音乐部分只获取了网易云热歌榜，API来自 [鼻子亲了脸](https://www.bzqll.com/)
 
+<img src="https://s1.ax1x.com/2020/08/02/at3P41.jpg" width = "22%"/>
+<img src="https://s1.ax1x.com/2020/08/02/at39E9.png" width = "22%"/>
+<img src="https://s1.ax1x.com/2020/08/02/at3CNR.png" width = "22%"/>
+<img src="https://s1.ax1x.com/2020/08/02/at3SHJ.png" width = "22%"/>
+
 ## 1. 开发环境
 - AndroidStudio 3.2
 - AndroidSDK 5.0
@@ -54,9 +59,3 @@ Android期末项目，仅用作学习使用，在线音乐部分只获取了网�
 | /res/layout/nav_header.xml | 侧拉菜单头布局 |
 | /res/menu/main.xml | 主界面活动跳转菜单布局 |
 | /res/menu/nav_menu.xml | 侧拉菜单项布局 |
-
-## 5. 效果图
-<img src="screenshots/播放器.png" width = "22%"/>
-<img src="screenshots/我的音乐.png" width = "22%"/>
-<img src="screenshots/本地音乐.png" width = "22%"/>
-<img src="screenshots/在线音乐.png" width = "22%"/>
