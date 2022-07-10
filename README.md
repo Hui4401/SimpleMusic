@@ -2,7 +2,7 @@
 
 Android期末项目，仅用作学习使用，在线音乐部分只获取了网易云热歌榜，API来自 [鼻子亲了脸](https://www.bzqll.com/)
 
-<img src="https://cdn.jsdelivr.net/gh/Hui4401/imgbed/project/SimpleMusic/4.jpg" width = "22%"/> <img src="https://cdn.jsdelivr.net/gh/Hui4401/imgbed/project/SimpleMusic/1.png" width = "22%"/> <img src="https://cdn.jsdelivr.net/gh/Hui4401/imgbed/project/SimpleMusic/2.png" width = "22%"/> <img src="https://cdn.jsdelivr.net/gh/Hui4401/imgbed/project/SimpleMusic/3.png" width = "22%"/>
+<img src="https://cdn.jsdelivr.net/gh/Hui4401/file/imgbed/project/SimpleMusic/4.jpg" width = "22%"/> <img src="https://cdn.jsdelivr.net/gh/Hui4401/file/imgbed/project/SimpleMusic/1.png" width = "22%"/> <img src="https://cdn.jsdelivr.net/gh/Hui4401/file/imgbed/project/SimpleMusic/2.png" width = "22%"/> <img src="https://cdn.jsdelivr.net/gh/Hui4401/file/imgbed/project/SimpleMusic/3.png" width = "22%"/>
 
 ## 1. 开发环境
 - AndroidStudio 3.2
